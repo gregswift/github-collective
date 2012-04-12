@@ -151,7 +151,7 @@ class Sync(object):
                 permission=team.permission,
                 )
         if response:
-            team_dict = json.load(response.content)
+            team_dict = json.loads(response.content)
             config._teams[team.name].id = team_dict['id']
         return response
 
