@@ -27,15 +27,17 @@ class Github(object):
         self.headers = {
             'Authorization': 'Basic %s' % base64.encodestring(
                 '%s:%s' % (username, password)).replace('\n', ''),
-            'Content-Length': '0',
             }
 
     #
     # requests library helpers
 
     def _request(self, method, url, data=None):
+        headers = self.headers
+        if method.func_name == 'put':
+            headers['Content-Length'] = '0'
         kw = {'url': BASE_URL + url + '?per_page=10000',
-              'headers': self.headers}
+              'headers': headers}
         if data:
             kw['data'] = data
         response = method(**kw)
