@@ -27,7 +27,7 @@ class Github(object):
         self.headers = {
             'Authorization': 'Basic %s' % base64.encodestring(
                 '%s:%s' % (username, password)).replace('\n', ''),
-            'Content-Length': '1',
+            'Content-Length': '0',
             }
 
     #
