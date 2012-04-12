@@ -26,7 +26,8 @@ class Github(object):
         self.pretend = pretend
         self.headers = {
             'Authorization': 'Basic %s' % base64.encodestring(
-                '%s:%s' % (username, password)).replace('\n', '')
+                '%s:%s' % (username, password)).replace('\n', ''),
+            'Content-Length': '1',
             }
 
     #
@@ -49,7 +50,13 @@ class Github(object):
                 method.__name__.upper(),
                 kw['url'],
                 )
-        response.raise_for_status()
+        try:
+            response.raise_for_status()
+        except Exception, e:
+            from pprint import pprint
+            pprint(kw)
+            pprint(response.content)
+            raise e
         return response
 
     def _get_request(self, url):
