@@ -119,6 +119,12 @@ Credits
 Changelog
 =========
 
+0.1.4 - unreleased
+------------------
+
+ - Fix response parsing issue when creating teams.
+   [davidjb]
+
 0.1.3 - 2011-07-09
 ------------------
 
