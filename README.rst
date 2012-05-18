@@ -114,6 +114,7 @@ Credits
 =======
 
 :Author: `Rok Garbas`_ (garbas)
+:Contributor: `David Beitey`_ (davidjb)
 
 
 Changelog
@@ -170,6 +171,7 @@ Changelog
 .. _`argparse`: http://pypi.python.org/pypi/argparse
 .. _`requests`: http://python-requests.org
 .. _`Rok Garbas`: http://www.garbas.si
+.. _`David Beitey`: http://davidjb.com
 
 .. _`e48de49`: https://github.com/garbas/github-collective/commit/e48de49
 .. _`e098f9d`: https://github.com/garbas/github-collective/commit/e098f9d
