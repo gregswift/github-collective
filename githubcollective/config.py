@@ -9,7 +9,7 @@ import requests
 import ConfigParser
 import StringIO
 from githubcollective.team import Team
-from githubcollective.repo import Repo
+from githubcollective.repo import Repo, REPO_BOOL_OPTIONS
 
 
 BASE_URL = 'https://api.github.com'
@@ -117,7 +117,18 @@ class ConfigCFG(Config):
             if section.startswith('repo:'):
                 # add repo
                 name = section[len('repo:'):]
-                repos[name] = Repo(name)
+                # load configuration for repo
+                repo_config = dict(config.items(section))
+                # remove reserved properties
+                for option in ('fork', 'owners', 'teams'):
+                    if option in repo_config:
+                        del repo_config[option]
+                # coerce boolean values
+                for option in REPO_BOOL_OPTIONS:
+                    if option in repo_config:
+                        repo_config[option] = config.getboolean(section,
+                                                                option)
+                repos[name] = Repo(name=name, **repo_config)
                 # add fork
                 if config.has_option(section, 'fork'):
                     fork_urls[name] = config.get(section, 'fork')

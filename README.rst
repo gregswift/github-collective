@@ -122,6 +122,11 @@ Changelog
 0.1.4 - unreleased
 ------------------
 
+ - Allowing repo properties to be set on creation and editing of config.
+   For available options, see http://developer.github.com/v3/repos/#create.
+   This facilities private repo creation (if quota available), amongst other
+   options.
+   [davidjb]
  - Fix response parsing issue when creating teams.
    [davidjb]
 

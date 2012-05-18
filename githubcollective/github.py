@@ -106,10 +106,14 @@ class Github(object):
         return self._post_request('/repos/%s/forks' % fork_url,
                 {'org': self.org})
 
-    def _gh_org_create_repo(self, name):
-        return self._post_request('/orgs/%s/repos' % self.org, json.dumps({
-            'name': name,
-            }))
+    def _gh_org_create_repo(self, repo):
+        return self._post_request('/orgs/%s/repos' % self.org,
+                                  json.dumps(repo.dumps()))
+
+    def _gh_org_edit_repo(self, repo, changes):
+        changes.update({'name': repo.name}) #Required by API
+        return self._patch_request('/repos/%s/%s' % (self.org, repo.name),
+                                   json.dumps(changes))
 
     def _gh_org_create_team(self, name, permission='pull'):
         assert permission in ['pull', 'push', 'admin']

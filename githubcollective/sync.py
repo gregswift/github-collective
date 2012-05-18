@@ -44,6 +44,24 @@ class Sync(object):
             if self.verbose:
                 print '    - %s' % repo
 
+        # UPDATE REPOS
+        if self.verbose:
+            print 'UPDATING REPOS:'
+        for repo in new.repos - to_remove:
+            old_repo = old.get_repo(repo)
+            new_repo = new.get_repo(repo)
+            changes = {}
+            #Go through differences and create dict of changes
+            #Settings removed from config are not modified
+            for setting in vars(new_repo).keys():
+                if not hasattr(old_repo, setting) or \
+                   getattr(old_repo, setting) != getattr(new_repo, setting):
+                    changes[setting] = getattr(new_repo, setting)
+            if changes:
+                self.edit_repo(old, old_repo, changes)
+                if self.verbose:
+                    print '    - %s' % repo
+
         # CREATE TEAMS
         if self.verbose:
             print 'CREATED TEAMS:'
@@ -99,7 +117,7 @@ class Sync(object):
                     self.remove_team_member(old, old_team, member)
                     print '        - %s' % member
 
-            # ADD REPOS 
+            # ADD REPOS
             to_add = new_team.repos - old_team.repos
             if to_add:
                 if self.verbose:
@@ -130,12 +148,15 @@ class Sync(object):
 
     def add_repo(self, config, repo):
         config._repos[repo.name] = repo
-        return self.github._gh_org_create_repo(repo.name)
+        return self.github._gh_org_create_repo(repo)
 
     def remove_repo(self, config, repo):
         pass
         #del config._repos[repo.name]
         # TODO: NotImplemented
+
+    def edit_repo(self, config, repo, changes):
+        return self.github._gh_org_edit_repo(repo, changes)
 
     def fork_repo(self, config, fork_url, repo):
         config._repos[repo.name] = repo
