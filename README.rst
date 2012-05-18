@@ -168,7 +168,7 @@ Changelog
    [garbas]
 
 
-.. _`GitHub organization`: https://github.com/blog/674-introducing-organizations
+.. _`GitHub organizations`: https://github.com/blog/674-introducing-organizations
 .. _`Python2.6`: http://www.python.org/download/releases/2.6/
 .. _`argparse`: http://pypi.python.org/pypi/argparse
 .. _`requests`: http://python-requests.org
