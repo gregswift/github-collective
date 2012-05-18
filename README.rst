@@ -1,16 +1,18 @@
 Introduction
 ============
 
-`Github organization`_ are great way for organization to manage their git
-repositories. This tool will let you automate tedious tasks of creating teams,
-granting permission and creating repositories.
+`GitHub organizations`_ are great way for organizations to manage their Git
+repositories. This tool will let you automate the tedious tasks of creating
+teams, granting permissions, and creating repositories or modifying their
+settings.
 
-Approach that ``github-collective`` tool takes is that you edit central
-configuration (for now only ini-like file) from where configuration is read and
-updated respectivly.
+The approach that the ``github-collective`` tool takes is that you edit a
+central configuration (currently an ini-like file) from where options are
+read and synchronized to GitHub respectively.
 
-Initially purposo of this scrip is to manage Plone's collective organisation on
-github: https://collective.github.com
+Initially, the purpose of this script was to manage Plone's collective
+organization on GitHub: http://collective.github.com. It is currently in use
+in several other locations.
 
 
 .. contents
@@ -166,7 +168,7 @@ Changelog
    [garbas]
 
 
-.. _`Github organization`: https://github.com/blog/674-introducing-organizations
+.. _`GitHub organization`: https://github.com/blog/674-introducing-organizations
 .. _`Python2.6`: http://www.python.org/download/releases/2.6/
 .. _`argparse`: http://pypi.python.org/pypi/argparse
 .. _`requests`: http://python-requests.org
