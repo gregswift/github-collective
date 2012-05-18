@@ -27,7 +27,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'argparse',
-        'requests',
+        'requests==0.12.1',
         ],
     entry_points="""
         [console_scripts]
