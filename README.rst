@@ -17,6 +17,22 @@ in several other locations.
 
 .. contents
 
+Features
+========
+
+* Repositories: create and modify repositories within an organization
+
+  * Configure all repository properties as per the `GitHub Repos API`_,
+    including privacy (public/private), description, and other metadata. 
+  * After inital repository creation happens, updated values in your
+    configuration will replace those on GitHub.
+
+* Teams: automatically create teams and modify members
+
+  * Control permissions for teams (for example: push, pull or admin)
+
+* Automatically syncs all of the above with GitHub when the tool is run.
+
 
 How to install
 ==============
@@ -169,6 +185,7 @@ Changelog
 
 
 .. _`GitHub organizations`: https://github.com/blog/674-introducing-organizations
+.. _`GitHub Repos API`: http://developer.github.com/v3/repos/#create
 .. _`Python2.6`: http://www.python.org/download/releases/2.6/
 .. _`argparse`: http://pypi.python.org/pypi/argparse
 .. _`requests`: http://python-requests.org
