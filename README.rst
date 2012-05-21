@@ -51,8 +51,7 @@ Usage
 =====
 
 When ``github-collective`` is installed it should create executable with same
-name.
-
+name in your `bin` directory. 
 ::
 
     % bin/github-collective --help
@@ -83,6 +82,15 @@ name.
       -v, --verbose
       -p, --pretend
 
+Configuration
+=============
+
+You can consult one of these examples:
+
+* https://raw.github.com/collective/github-collective/master/example.cfg
+* http://collective.github.com/permissions.cfg
+
+to get an idea on how to construct your configuration. 
 
 Example of configuration stored locally
 ---------------------------------------
