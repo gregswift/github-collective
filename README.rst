@@ -101,7 +101,7 @@ Example of configuration stored on github
 ::
 
     % bin/github-collective \
-        -c https://raw.github.com/garbas/github-collective/master/example.cfg \
+        -c https://raw.github.com/collective/github-collective/master/example.cfg \
                          # url to configuration file
         -o collective \  # organization that we are 
         -u garbas \      # account that has management right for organization
@@ -113,7 +113,7 @@ Example of cached configuration
 ::
 
     % bin/github-collective \
-        -c https://raw.github.com/garbas/github-collective/master/example.cfg \
+        -c https://raw.github.com/collective/github-collective/master/example.cfg \
                          # url to configuration file
         -C .cache        # file where store and read cached results from github
         -o collective \  # organization that we are 
