@@ -22,7 +22,7 @@ Features
 
 * Repositories: create and modify repositories within an organization
 
-  * Configure all repository properties as per the `GitHub Rapes API`_,
+  * Configure all repository properties as per the `GitHub Repos API`_,
     including privacy (public/private), description, and other metadata. 
   * After the initial repository creation happens, updated values in your
     configuration will replace those on GitHub.
@@ -67,7 +67,7 @@ like so::
     hooks = my-hook
 
 Values provided here will be coerced into suitable values for posting
-to GitHub's API. For specifications, refer to `https://api.github.com/hooks`_.
+to GitHub's API. For specifications, refer to https://api.github.com/hooks
 
     `name` (required)
       String identifier for a service hook. Refer to specification for
