@@ -22,10 +22,21 @@ Features
 
 * Repositories: create and modify repositories within an organization
 
-  * Configure all repository properties as per the `GitHub Repos API`_,
+  * Configure all repository properties as per the `GitHub Rapes API`_,
     including privacy (public/private), description, and other metadata. 
-  * After inital repository creation happens, updated values in your
+  * After the initial repository creation happens, updated values in your
     configuration will replace those on GitHub.
+
+* Service hooks: add and modify service hooks for repositories.
+
+  * GitHub repositories have support for sending information upon
+    certain events taking place (for instance, pushes being made to a 
+    repository or a fork being taken).
+  * After the initial repo creation process takes place, updated values in your
+    hook configuration will `replace` those on GitHub. 
+  * Hooks not present in your configuration (such as those manually added
+    on GitHub or those removed from local configuration) will *not* be
+    deleted.
 
 * Teams: automatically create teams and modify members
 
@@ -33,6 +44,48 @@ Features
 
 * Automatically syncs all of the above with GitHub when the tool is run.
 
+Configuration 
+=============
+
+Service hooks
+-------------
+
+Configure service hooks in your configuration as per the `GitHub Hooks API`_ 
+like so::
+
+    [hook:my-hook]
+    name = web
+    config =
+        {"url": "http://plone.org",
+        "insecure_ssl": "1"
+        }
+    events = push issues fork
+    active = true
+
+    [repo:my.project]
+    ...
+    hooks = my-hook
+
+Values provided here will be coerced into suitable values for posting
+to GitHub's API. For specifications, refer to `https://api.github.com/hooks`_.
+
+    `name` (required)
+      String identifier for a service hook. Refer to specification for
+      available identifiers.
+
+    `config` (required)
+      JSON consisting of key/value pairs relating to configuration
+      of this service.  Refer to specifications for applicable config for each
+      service. *Note*: in order to prevent this script from attempting
+      to update GitHub every run, record Boolean values as string "1" or "0"
+      in this JSON - this is how values are stored by GitHub.
+
+    `events` (optional)
+      List of events the hook should apply to. Different services can 
+      respond to different events. Refer to API specification for information.
+
+    `active` (optional)
+      Boolean value of whether the hook is enabled or not.
 
 How to install
 ==============
@@ -149,6 +202,10 @@ Changelog
 0.1.4 - unreleased
 ------------------
 
+ - Allow service hooks to be specified within the configuration.
+   For samples, see the example configuration. Any GitHub supported
+   hook can be associated with repos.
+   [davidjb]
  - Allowing repo properties to be set on creation and editing of config.
    For available options, see http://developer.github.com/v3/repos/#create.
    This facilities private repo creation (if quota available), amongst other
@@ -194,6 +251,7 @@ Changelog
 
 .. _`GitHub organizations`: https://github.com/blog/674-introducing-organizations
 .. _`GitHub Repos API`: http://developer.github.com/v3/repos/#create
+.. _`GitHub Hooks API`: http://developer.github.com/v3/repos/hooks/
 .. _`Python2.6`: http://www.python.org/download/releases/2.6/
 .. _`argparse`: http://pypi.python.org/pypi/argparse
 .. _`requests`: http://python-requests.org

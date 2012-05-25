@@ -5,6 +5,7 @@ except:
     import json
 
 from githubcollective.team import Team
+from githubcollective.repo import REPO_RESERVED_OPTIONS
 
 
 class Sync(object):
@@ -22,14 +23,23 @@ class Sync(object):
         to_add = new.repos - old.repos
         for repo in to_add:
             fork_url = new.get_fork_url(repo)
+            new_repo = new.get_repo(repo)
             if fork_url is None:
-                self.add_repo(old, new.get_repo(repo))
+                self.add_repo(old, new_repo)
                 if self.verbose:
                     print '    - %s' % repo
             else:
-                self.fork_repo(old, fork_url, new.get_repo(repo))
+                self.fork_repo(old, fork_url, new_repo)
                 if self.verbose:
                     print '    - %s - FORK OF %s' % (repo, fork_url)
+
+            for hook in new_repo.hooks:
+                import ipdb; ipdb.set_trace()
+                self.add_repo_hook(old, new_repo, hook)
+                if self.verbose:
+                    print '    - %s - ADDED HOOK: %s (%r)' % (repo,
+                                                              hook.name,
+                                                              hook.config)
 
         # REMOVE REPOS
         if self.verbose:
@@ -53,7 +63,8 @@ class Sync(object):
             changes = {}
             #Go through differences and create dict of changes
             #Settings removed from config are not modified
-            for setting in vars(new_repo).keys():
+            for setting in set(vars(new_repo).keys()) \
+                           - set(REPO_RESERVED_OPTIONS):
                 if not hasattr(old_repo, setting) or \
                    getattr(old_repo, setting) != getattr(new_repo, setting):
                     changes[setting] = getattr(new_repo, setting)
@@ -61,6 +72,39 @@ class Sync(object):
                 self.edit_repo(old, old_repo, changes)
                 if self.verbose:
                     print '    - %s' % repo
+
+            #Go through hooks for changes
+            #Hooks removed from configuration are left alone as
+            #they may have been manually added upstream.
+            if new_repo.hooks:
+                old_hooks = old_repo.getGroupedHooks()
+                new_hooks = new_repo.getGroupedHooks()
+                if old_hooks != new_hooks:
+                    #Conditional updating if change has happened in cfg
+                    for hook_type, hooks in new_hooks.items():
+                        for position_id, hook in enumerate(hooks):
+                            if not hook_type in old_hooks or \
+                               position_id < len(old_hooks[hook_type]):
+                                #If attempting to update existing hook
+                                old_hook = old_hooks[hook_type][position_id]
+                                old_hook_config = vars(old_hook)
+                                new_hook_config = old_hook_config.copy()
+                                new_hook_config.update(vars(hook))
+                                if old_hook_config != new_hook_config:
+                                    #If any difference at all, update server
+                                    self.edit_repo_hook(old,
+                                                        old_repo,
+                                                        old_hook.id,
+                                                        hook)
+                                    if self.verbose:
+                                        print '  - %s - EDITED HOOK: %s (%r)' \
+                                            % (repo, hook.name, hook.config)
+                            else:
+                                #Adding a new hook
+                                self.add_repo_hook(old, old_repo, hook)
+                                if self.verbose:
+                                    print '    - %s - ADDED HOOK: %s (%r)' \
+                                            % (repo, hook.name, hook.config)
 
         # CREATE TEAMS
         if self.verbose:
@@ -150,6 +194,9 @@ class Sync(object):
         config._repos[repo.name] = repo
         return self.github._gh_org_create_repo(repo)
 
+    def add_repo_hook(self, config, repo, hook):
+        return self.github._gh_org_create_repo_hook(repo, hook)
+
     def remove_repo(self, config, repo):
         pass
         #del config._repos[repo.name]
@@ -157,6 +204,12 @@ class Sync(object):
 
     def edit_repo(self, config, repo, changes):
         return self.github._gh_org_edit_repo(repo, changes)
+
+    def edit_repo_hook(self, config, repo, hook_id, hook):
+        hook_ids = [h.id for h in config._repos[repo.name].hooks]
+        hook_index = hook_ids.index(hook_id)
+        config._repos[repo.name].hooks[hook_index] = hook
+        return self.github._gh_org_edit_repo_hook(repo, hook_id, hook)
 
     def fork_repo(self, config, fork_url, repo):
         config._repos[repo.name] = repo

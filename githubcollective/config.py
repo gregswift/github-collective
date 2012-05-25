@@ -9,7 +9,9 @@ import requests
 import ConfigParser
 import StringIO
 from githubcollective.team import Team
-from githubcollective.repo import Repo, REPO_BOOL_OPTIONS
+from githubcollective.repo import Repo, REPO_BOOL_OPTIONS, \
+        REPO_RESERVED_OPTIONS
+from githubcollective.hook import Hook, HOOK_BOOL_OPTIONS
 
 
 BASE_URL = 'https://api.github.com'
@@ -55,6 +57,8 @@ class Config(object):
             teams[team.name] = team
 
         for repo in data['repos']:
+            if repo['hooks']:
+                repo['hooks'] = [Hook(**hook) for hook in repo['hooks']]
             repo = Repo(**repo)
             repos[repo.name] = repo
 
@@ -120,7 +124,7 @@ class ConfigCFG(Config):
                 # load configuration for repo
                 repo_config = dict(config.items(section))
                 # remove reserved properties
-                for option in ('fork', 'owners', 'teams'):
+                for option in REPO_RESERVED_OPTIONS:
                     if option in repo_config:
                         del repo_config[option]
                 # coerce boolean values
@@ -128,7 +132,25 @@ class ConfigCFG(Config):
                     if option in repo_config:
                         repo_config[option] = config.getboolean(section,
                                                                 option)
-                repos[name] = Repo(name=name, **repo_config)
+                # load hooks for repo
+                hooks = []
+                if config.has_option(section, 'hooks'):
+                    for hook in config.get(section, 'hooks').split():
+                        hook_section = 'hook:%s' % hook
+                        hook_config = dict(config.items(hook_section))
+                        # coerce values into correct formats
+                        hook_config['config'] = \
+                                hook_config['config'].replace('\n', '')
+                        if 'events' in hook_config:
+                            hook_config['events'] = \
+                                    hook_config['events'].split()
+                        for option in HOOK_BOOL_OPTIONS:
+                            if option in hook_config:
+                                hook_config[option] = config.getboolean(
+                                    hook_section, option)
+                        hooks.append(Hook(**hook_config))
+
+                repos[name] = Repo(name=name, hooks=hooks, **repo_config)
                 # add fork
                 if config.has_option(section, 'fork'):
                     fork_urls[name] = config.get(section, 'fork')
@@ -207,7 +229,10 @@ class ConfigGithub(Config):
            not self._github['repos']:
             self._github['repos'] = {}
             for item in self.github._gh_org_repos():
-                repo = Repo(**item)
+                hooks = []
+                for hook in self.github._gh_org_repo_hooks(item['name']):
+                    hooks.append(Hook(**hook))
+                repo = Repo(hooks=hooks, **item)
                 self._github['repos'][repo.name] = repo
         return self._github['repos']
     def _set_repos(self, value):

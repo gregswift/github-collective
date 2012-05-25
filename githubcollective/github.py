@@ -102,6 +102,9 @@ class Github(object):
     def _gh_org_repos(self):
         return self._get_request('/orgs/%s/repos' % self.org)
 
+    def _gh_org_repo_hooks(self, repo):
+        return self._get_request('/repos/%s/%s/hooks' % (self.org, repo))
+
     def _gh_org_fork_repo(self, fork_url):
         return self._post_request('/repos/%s/forks' % fork_url,
                 {'org': self.org})
@@ -110,10 +113,19 @@ class Github(object):
         return self._post_request('/orgs/%s/repos' % self.org,
                                   json.dumps(repo.dumps()))
 
+    def _gh_org_create_repo_hook(self, repo, hook):
+        return self._post_request('/repos/%s/%s/hooks' % (self.org, repo.name),
+                                  json.dumps(hook.dumps()))
+
     def _gh_org_edit_repo(self, repo, changes):
         changes.update({'name': repo.name}) #Required by API
         return self._patch_request('/repos/%s/%s' % (self.org, repo.name),
                                    json.dumps(changes))
+
+    def _gh_org_edit_repo_hook(self, repo, hook_id, hook):
+        return self._patch_request('/repos/%s/%s/hooks/%i' % \
+                                   (self.org, repo.name, hook_id),
+                                   json.dumps(hook.dumps()))
 
     def _gh_org_create_team(self, name, permission='pull'):
         assert permission in ['pull', 'push', 'admin']
