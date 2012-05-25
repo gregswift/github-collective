@@ -6,7 +6,8 @@ setup(
     name='github-collective',
     version=version,
     description="Script to manage github account in a collective manner",
-    long_description=open("README.rst").read(),
+    long_description=open("README.rst").read() + "\n" + \
+                     open("CHANGES.rst").read(),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Environment :: Console",

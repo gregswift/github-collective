@@ -196,59 +196,6 @@ Credits
 :Contributor: `David Beitey`_ (davidjb)
 
 
-Changelog
-=========
-
-0.1.4 - unreleased
-------------------
-
- - Allow service hooks to be specified within the configuration.
-   For samples, see the example configuration. Any GitHub supported
-   hook can be associated with repos.
-   [davidjb]
- - Allowing repo properties to be set on creation and editing of config.
-   For available options, see http://developer.github.com/v3/repos/#create.
-   This facilities private repo creation (if quota available), amongst other
-   options.
-   [davidjb]
- - Fix response parsing issue when creating teams.
-   [davidjb]
-
-0.1.3 - 2011-07-09
-------------------
-
- - fix caching file bug, cache now working
-   [garbas]
-
-0.1.2 - 2011-07-03
-------------------
-
- - remane team to old_team to keep convention in sync.run method, using
-   add instead of update on sets
-   [`e48de49`_, garbas]
- - pretend should work for all except get reuqest type
-   [`e098f9d`_, garbas]
- - nicer dump of json in cache file, unindent section which searches for
-   repos defined in teams
-   [`b8cb123`_, garbas]
- - we should write to cache file when there is no cache file avaliable
-   [`fd7f9ee`_, garbas]
-
-0.1.1 - 2011-07-02
-------------------
-
- - and we have first bugfix relese, after refractoring and merging
-   ``enable-cache`` branch.
-   [`a09d174`_, garbas]
-
-
-0.1 - 2011-07-02
-----------------
-
- - initial release
-   [garbas]
-
-
 .. _`GitHub organizations`: https://github.com/blog/674-introducing-organizations
 .. _`GitHub Repos API`: http://developer.github.com/v3/repos/#create
 .. _`GitHub Hooks API`: http://developer.github.com/v3/repos/hooks/
@@ -258,8 +205,3 @@ Changelog
 .. _`Rok Garbas`: http://www.garbas.si
 .. _`David Beitey`: http://davidjb.com
 
-.. _`e48de49`: https://github.com/garbas/github-collective/commit/e48de49
-.. _`e098f9d`: https://github.com/garbas/github-collective/commit/e098f9d
-.. _`b8cb123`: https://github.com/garbas/github-collective/commit/b8cb123
-.. _`fd7f9ee`: https://github.com/garbas/github-collective/commit/fd7f9ee
-.. _`a09d174`: https://github.com/garbas/github-collective/commit/a09d174
