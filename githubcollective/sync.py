@@ -82,7 +82,7 @@ class Sync(object):
                     #Conditional updating if change has happened in cfg
                     for hook_type, hooks in new_hooks.items():
                         for position_id, hook in enumerate(hooks):
-                            if not hook_type in old_hooks or \
+                            if hook_type in old_hooks and \
                                position_id < len(old_hooks[hook_type]):
                                 #If attempting to update existing hook
                                 old_hook = old_hooks[hook_type][position_id]
