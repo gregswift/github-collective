@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.1.4 - unreleased
+0.1.5 (unreleased)
 ------------------
 
  - Allow service hooks to be specified within the configuration.
@@ -15,6 +15,12 @@ Changelog
    [davidjb]
  - Fix response parsing issue when creating teams.
    [davidjb]
+
+0.1.4 - 2012-02-19
+------------------
+
+ - adding support for requests==0.10.2 and removing pdb
+   [`f561d79`_, garbas]
 
 0.1.3 - 2011-07-09
 ------------------
@@ -50,6 +56,7 @@ Changelog
  - initial release
    [garbas]
 
+.. _`f561d79`: https://github.com/garbas/github-collective/commit/f561d79
 .. _`e48de49`: https://github.com/garbas/github-collective/commit/e48de49
 .. _`e098f9d`: https://github.com/garbas/github-collective/commit/e098f9d
 .. _`b8cb123`: https://github.com/garbas/github-collective/commit/b8cb123
