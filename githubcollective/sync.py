@@ -205,7 +205,8 @@ class Sync(object):
         return self.github._gh_org_edit_repo(repo, changes)
 
     def edit_repo_hook(self, config, repo, hook_id, hook):
-        hook_ids = [h.id for h in config._repos[repo.name].hooks]
+        hook_ids = [getattr(h, 'id', None) \
+                    for h in config._repos[repo.name].hooks]
         hook_index = hook_ids.index(hook_id)
         config._repos[repo.name].hooks[hook_index] = hook
         return self.github._gh_org_edit_repo_hook(repo, hook_id, hook)
