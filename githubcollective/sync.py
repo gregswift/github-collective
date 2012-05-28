@@ -34,7 +34,6 @@ class Sync(object):
                     print '    - %s - FORK OF %s' % (repo, fork_url)
 
             for hook in new_repo.hooks:
-                import ipdb; ipdb.set_trace()
                 self.add_repo_hook(old, new_repo, hook)
                 if self.verbose:
                     print '    - %s - ADDED HOOK: %s (%r)' % (repo,
