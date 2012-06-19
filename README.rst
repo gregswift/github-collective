@@ -50,39 +50,92 @@ Configuration
 Service hooks
 -------------
 
-Configure service hooks in your configuration as per the `GitHub Hooks API`_ 
-like so::
+GitHub allows repositories to be configured with `service hooks`, which allow
+GitHub to communicate with a web server (and thus web services) when
+certain actions take place within that repository.  These can be
+configured via GitHub's web interface through the ``Admin`` page for
+repostories, in the ``Service Hooks`` section, which provides most options, 
+or else via GitHub's API, which provides some additional hidden settings.  
 
-    [hook:my-hook]
+For an introduction to this topic, consult the `Post-Receive Hooks`_ 
+documentation.
+
+Effectively, GitHub will send a POST request to a given web-based endpoint with
+relevant information about commits and metadata about the repository when a
+certain trigger happens. The `GitHub Hooks API`_ has complete details about
+what event triggers are available, details about what services are available,
+and more.
+
+Examples
+^^^^^^^^
+
+As a worked example, you can configure a repository you have to send details
+about commits and changes as they happen to a Jenkins CI instance in order for
+continuous testing to take place. You would enter the following in your
+``github-collective`` configuration like so::
+
+    [hook:my-jenkins-hook]
     name = web
     config =
-        {"url": "http://plone.org",
+        {"url": "https://jenkins.plone.org/github-webhook/",
         "insecure_ssl": "1"
         }
-    events = push issues fork
     active = true
 
-    [repo:my.project]
+    [repo:collective.github.com]
     ...
-    hooks = my-hook
+    hooks = 
+        my-jenkins-hook
 
-Values provided here will be coerced into suitable values for posting
-to GitHub's API. For specifications, refer to https://api.github.com/hooks
+The result here is that, once run, the ``collective.github.com`` repository
+will have a ``web`` hook created against it that instructs GitHub to send the 
+relevant POST payload to the given ``url`` in question. This hook creation
+is effectively synomymous with adding a hook via the web-based interface,
+with the one minor exception in that we provide an extra value 
+for ``insecure_ssl`` to ensure that GitHub will communicate with our non-CA
+signed certificate.
+
+Our ``[repo:]`` section has a ``hooks`` option in which you can specify
+the identifiers of one or more hooks within your configuration. This option
+is not required, however, should you have no service hooks.
+
+See the next section for specifics and how to configure
+these types of sections within your ``github-collective`` configuration.
+
+Hook section configuration
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Each ``[hook:]`` section within your configuration can utilise the following
+values. Options provided here will be coerced from standard ini-style options
+into suitable values for posting JSON to GitHub's API. For specifications,
+refer to https://api.github.com/hooks
 
     `name` (required)
       String identifier for a service hook. Refer to specification for
-      available identifiers.
+      available service identifiers or to the Service Hooks administration page
+      for your repository. One of the most commonly used options is ``web`` for
+      generic web hooks (seen as `WebHook URLs` in the Service Hooks
+      administration page). 
 
     `config` (required)
-      JSON consisting of key/value pairs relating to configuration
-      of this service.  Refer to specifications for applicable config for each
-      service. *Note*: in order to prevent this script from attempting
-      to update GitHub every run, record Boolean values as string "1" or "0"
-      in this JSON - this is how values are stored by GitHub.
+      Valid JSON consisting of key/value pairs relating to configuration of
+      this service.  Refer to specifications for applicable config for each
+      service type. 
+      
+      *Note*: if a change is made to your local configuration,
+      ``github-collective`` will attempt to update hook settings on GitHub. If
+      you have Boolean values present in this option, then in order to prevent
+      ``github-collective`` from attempting to update GitHub on every run,
+      these values should exist as strings - either ``"1"`` or``"0"`` - as this
+      is how GitHub stores configuration (and we compare against this to check
+      whether we need to sync changes).
 
     `events` (optional)
-      List of events the hook should apply to. Different services can 
-      respond to different events. Refer to API specification for information.
+      List of events the hook should apply to. Different services can respond
+      to different events. If not provided, the hook will default to
+      ``push``. Keep in mind that certain services only listen for certain
+      types of events.  Refer to API specification for information.
+
 
     `active` (optional)
       Boolean value of whether the hook is enabled or not.
@@ -230,6 +283,7 @@ Credits
 .. _`GitHub organizations`: https://github.com/blog/674-introducing-organizations
 .. _`GitHub Repos API`: http://developer.github.com/v3/repos/#create
 .. _`GitHub Hooks API`: http://developer.github.com/v3/repos/hooks/
+.. _`Post-Receive Hooks`: https://help.github.com/articles/post-receive-hooks
 .. _`Python2.6`: http://www.python.org/download/releases/2.6/
 .. _`argparse`: http://pypi.python.org/pypi/argparse
 .. _`requests`: http://python-requests.org
