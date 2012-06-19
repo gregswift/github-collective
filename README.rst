@@ -47,6 +47,128 @@ Features
 Configuration 
 =============
 
+Repositories
+------------
+
+Repositories form the basis for your code hosting on GitHub. Using a
+``[repo:]`` section within your configuration, the script will automatically
+create a new repository with the relevant settings, or update a repository if
+it already exists.  Alternatively, you can specify to fork an existing
+repository as well.
+
+Examples
+^^^^^^^^
+
+Keep in mind that all of the options given are not always required but are 
+set out here to demonstrate what you can do.
+
+We can create a new repository, using various options allowable
+by the `GitHub Repos API`_::
+
+    [repo:collective.demo]
+    owners = davidjb
+    teams = contributors
+    hooks = 
+        my-jenkins
+        some-website
+    description = My awesome repo
+    homepage = http://example.org
+    has_issues = false
+    has_wiki = false
+    has_downloads = false
+
+As the example suggests, this will create a repository with the name of
+``collective.demo``, assign ``davidjb`` administrative rights and the
+``contributors`` team push and pull rights, and create the relevant service
+hooks. The repository will the given metadata applied to it and options set.
+If we later go and change the above configuration (or indeed if the repository
+already exists on GitHub), then differences will be synced to GitHub.  For
+instance, we could change ``has_issues`` to ``true`` to enable the issue
+tracker again, add or remove ``hooks``, and more.
+
+We can also fork a repository that already exists::
+
+    [repo:github-collective]
+    fork = collective/github-collective
+    owners = garbas
+
+Finally, in a special example, we can create a repository as ``Private``,
+if you are using ``github-collective`` against a paid-for GitHub organization
+like so::
+
+    [repo:collective.demo]
+    owners = davidjb
+    private = true
+
+This will fail if your GitHub organization lacks sufficient quota (for 
+instance, those that are free only).
+
+Section configuration
+^^^^^^^^^^^^^^^^^^^^^
+
+When creating or updating a repository, arbitrary options provided within a
+``[repo:]`` section will be sent as part of the relevant POST request. For all
+potential options, see the `GitHub Repos API`_ documentation. All values are
+optional (with the exception of ``name``, which must be specified already in
+our configuration) and GitHub provides defaults for many of the options as per
+the documentation.  Note that values that GitHub expects as Boolean (for
+example ``private``, ``has_issues`` and so forth) will be coerced accordingly
+as per standard Python ini-syntax.
+
+There are special options, however, which are not sent but rather used locally
+in configuring a repository.  These are:
+
+    `owners` (optional)
+      List of GitHub user names to set as `Owners` of a repository. Within
+      GitHub's interface, these users are seen to possess the `Push, Pull &
+      Administrative` permission. This should not be confused with Owners of 
+      an entire GitHub organization.
+
+    `teams` (optional)
+      List of string identifiers for collaborators of a repository. Teams
+      specified here will be granted the appropriate permission to the given
+      repository (see Teams configuration). The identifiers in this option
+      should refer to relevant ``[team:]`` sections in the local configuration.
+      This list should contain just the identifier after the colon in the
+      section name. For example, a section of ``[team:my-awesome-team]`` would
+      be referenced in the ``teams`` option as just ``my-awesome-team``. 
+
+    `hooks` (optional)
+      List of string identifiers for GitHub service hooks, referring to
+      relevant ``[hook:]`` sections in the local configuration. This list
+      should contain just the identifier after the colon in the section name.
+      For example, a section of ``[hook:my-webhook]`` would be referenced in
+      the ``hooks`` option as just ``my-webhook``. Service hooks specified here
+      will be either created or updated against the repository.
+    
+Forking is a special case and settings in your configuration will not be
+sent to GitHub until updating the repository takes place.
+
+Teams
+-----
+
+Groups of users on GitHub organizations can be set out into Teams.
+Using ``[team:]`` sections, you can create as many teams as you'd like
+and assign them access to repositories.
+
+Examples
+^^^^^^^^
+
+More details coming::
+
+    [team:contributors]
+    permission = push
+    members =
+        MarcWeber
+        honza
+        garbas
+
+
+Section configuration
+^^^^^^^^^^^^^^^^^^^^^
+
+Details coming.
+
 Service hooks
 -------------
 
@@ -54,7 +176,7 @@ GitHub allows repositories to be configured with `service hooks`, which allow
 GitHub to communicate with a web server (and thus web services) when
 certain actions take place within that repository.  These can be
 configured via GitHub's web interface through the ``Admin`` page for
-repostories, in the ``Service Hooks`` section, which provides most options, 
+repositories, in the ``Service Hooks`` section, which provides most options, 
 or else via GitHub's API, which provides some additional hidden settings.  
 
 For an introduction to this topic, consult the `Post-Receive Hooks`_ 
@@ -90,7 +212,7 @@ continuous testing to take place. You would enter the following in your
 The result here is that, once run, the ``collective.github.com`` repository
 will have a ``web`` hook created against it that instructs GitHub to send the 
 relevant POST payload to the given ``url`` in question. This hook creation
-is effectively synomymous with adding a hook via the web-based interface,
+is effectively synonymous with adding a hook via the web-based interface,
 with the one minor exception in that we provide an extra value 
 for ``insecure_ssl`` to ensure that GitHub will communicate with our non-CA
 signed certificate.
@@ -102,8 +224,8 @@ is not required, however, should you have no service hooks.
 See the next section for specifics and how to configure
 these types of sections within your ``github-collective`` configuration.
 
-Hook section configuration
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+Section configuration
+^^^^^^^^^^^^^^^^^^^^^
 
 Each ``[hook:]`` section within your configuration can utilise the following
 values. Options provided here will be coerced from standard ini-style options
