@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.1.5 (unreleased)
-------------------
+0.2 (unreleased)
+----------------
 
  - Allow service hooks to be specified within the configuration.
    For samples, see the example configuration. Any GitHub supported
