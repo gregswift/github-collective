@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.2 (unreleased)
+0.2 (2012-06-22)
 ----------------
 
  - Allow service hooks to be specified within the configuration.
