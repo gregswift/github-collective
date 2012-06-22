@@ -47,6 +47,16 @@ Features
 Configuration 
 =============
 
+Local Identifiers
+-----------------
+
+If the documentation refers to a `local identifier`, such as that
+within the ``[repo:]`` `teams` option, then the given option should contain
+just the identifier after the colon in the section name being referred to. For
+example, a section of ``[team:my-awesome-team]`` would be referenced in the
+``teams`` option as just ``my-awesome-team``. If the option in question 
+calls for a list, then each value in the list should follow this.
+
 Repositories
 ------------
 
@@ -125,13 +135,11 @@ in configuring a repository.  These are:
       an entire GitHub organization.
 
     `teams` (optional)
-      List of string identifiers for collaborators of a repository. Teams
+      List of local string identifiers for collaborators of a repository. Teams
       specified here will be granted the appropriate permission to the given
       repository (see Teams configuration). The identifiers in this option
       should refer to relevant ``[team:]`` sections in the local configuration.
-      This list should contain just the identifier after the colon in the
-      section name. For example, a section of ``[team:my-awesome-team]`` would
-      be referenced in the ``teams`` option as just ``my-awesome-team``. 
+      This option is the inverse of ``repos`` for repository configuration.
 
     `hooks` (optional)
       List of string identifiers for GitHub service hooks, referring to
@@ -149,12 +157,31 @@ Teams
 
 Groups of users on GitHub organizations can be set out into Teams.
 Using ``[team:]`` sections, you can create as many teams as you'd like
-and assign them access to repositories.
+and assign them access to repositories. You can achieve this by either
+assigning repositories to teams, or teams to repositories - they are both
+equivalent.
 
 Examples
 ^^^^^^^^
 
-More details coming::
+In order to create a Team of users with the ability to push and pull from
+certain repositories, the configure would look like::
+
+    [team:contributors]
+    permission = push
+    members =
+        MarcWeber
+        honza
+        garbas
+    repos =
+        snipmate-snippets
+        ...
+
+    [repo:snipmate-snippets]
+        ...
+
+Similarly, we can achieve the same with inverting the ``repos`` option
+into ``teams`` on the repository configuration::
 
     [team:contributors]
     permission = push
@@ -163,11 +190,43 @@ More details coming::
         honza
         garbas
 
+    [repo:snipmate-snippets]
+    teams =
+        contributors
+
+By changing the ``permission`` option, you will affect what the users of that
+Team can do on the repositories they're assigned to.  See below for details.
+
 
 Section configuration
 ^^^^^^^^^^^^^^^^^^^^^
 
-Details coming.
+Each ``[team:]`` section within your configuration can utilise the following
+values.
+
+    `permission` (optional)
+      The permission to assign to this group. At time of writing, GitHub
+      has three types of permissions available for Teams:
+
+       * ``push``: team members can pull, but not push to or administer
+         repositories.
+       * ``pull``: team members can pull and push, but not administer
+         repositories.
+       * ``admin``: team members can pull, push and administer repositories.
+
+      If not provided, this option defaults to ``pull``.
+
+    `members` (optional)
+      List of GitHub user names to set as part of this Team. These users
+      will be granted the ``permission`` above to any repositories
+      this Team is configured against.
+
+    `repos` (optional)
+      List of string identifiers of repositories this Team should have
+      the given permission against. The identifiers in this option
+      should refer to relevant ``[repo:]`` sections in the local configuration.
+      This option is the inverse of ``teams`` for repository configuration.
+
 
 Service hooks
 -------------
@@ -236,7 +295,7 @@ refer to https://api.github.com/hooks
       String identifier for a service hook. Refer to specification for
       available service identifiers or to the Service Hooks administration page
       for your repository. One of the most commonly used options is ``web`` for
-      generic web hooks (seen as `WebHook URLs` in the Service Hooks
+      generic web hooks (seen as `Brook URLs` in the Service Hooks
       administration page). 
 
     `config` (required)

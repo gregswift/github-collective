@@ -15,6 +15,8 @@ Changelog
    [davidjb]
  - Fix response parsing issue when creating teams.
    [davidjb]
+ - Improved end-user documentation.
+   [davidjb]
 
 0.1.4 - 2012-02-19
 ------------------
