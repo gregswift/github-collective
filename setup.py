@@ -5,7 +5,7 @@ version = '0.2.dev0'
 setup(
     name='github-collective',
     version=version,
-    description="Script to manage github account in a collective manner",
+    description="Script to manage GitHub organizations in a collective manner",
     long_description=open("README.rst").read() + "\n" + \
                      open("CHANGES.rst").read(),
     classifiers=[
@@ -18,10 +18,10 @@ setup(
         #"Programming Language :: Python :: 2.7",
         #"Programming Language :: Python :: 3.2",
         ],
-    keywords='github git permission collaboration collective',
+    keywords='github git permission collaboration collective organization',
     author='Rok Garbas',
     author_email='rok@garbas.si',
-    url='https://github.com/garbas/github-collective',
+    url='https://github.com/collective/github-collective',
     license='BSD',
     packages=['githubcollective'],
     include_package_data=True,
