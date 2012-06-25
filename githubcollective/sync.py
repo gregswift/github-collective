@@ -44,12 +44,8 @@ class Sync(object):
         if self.verbose:
             print 'REPOS TO BE REMOVED:'
         to_remove = old.repos - new.repos
-        if to_remove:
-            # empty cache and recheck if we really need to delete it
-            old._github['repos'] = {}
-            to_remove = old.repos - new.repos
         for repo in to_remove:
-            self.remove_repo(old, old.get_repo(repo))
+            result = self.remove_repo(old, old.get_repo(repo))
             if self.verbose:
                 print '    - %s' % repo
 
@@ -197,9 +193,8 @@ class Sync(object):
         return self.github._gh_org_create_repo_hook(repo, hook)
 
     def remove_repo(self, config, repo):
-        pass
-        #del config._repos[repo.name]
-        # TODO: NotImplemented
+        del config._repos[repo.name]
+        return self.github._gh_org_remove_repo(repo)
 
     def edit_repo(self, config, repo, changes):
         return self.github._gh_org_edit_repo(repo, changes)

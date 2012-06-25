@@ -4,7 +4,11 @@ Changelog
 0.3 (unreleased)
 ----------------
 
-- Nothing changed yet.
+ - Implement deletion of repos from configuration now GitHub API v3 
+   supports this. *Warning*: if a repo exists on GitHub but not in 
+   your configuration, it will now be deleted. Run the command in
+   `pretend` mode first if unsure.
+   [davidjb]
 
 
 0.2 (2012-06-22)

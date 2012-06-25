@@ -113,6 +113,9 @@ class Github(object):
         return self._post_request('/orgs/%s/repos' % self.org,
                                   json.dumps(repo.dumps()))
 
+    def _gh_org_remove_repo(self, repo):
+        return self._delete_request('/repos/%s/%s' % (self.org, repo.name))
+
     def _gh_org_create_repo_hook(self, repo, hook):
         return self._post_request('/repos/%s/%s/hooks' % (self.org, repo.name),
                                   json.dumps(hook.dumps()))

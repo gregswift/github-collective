@@ -60,6 +60,17 @@ You can consult one of these examples:
 to get an idea on how to construct your configuration. Read on for specifics
 regarding the idividual sections and the available options.
 
+.. warning::
+
+    For existing GitHub organizations, your configuration should mirror 
+    what's on GitHub exactly. If your configuration does not match, this
+    could be destructive. For example, if you have additional repositories on
+    GitHub that aren't in your configuration, they will be removed upon sync as
+    we cannot distinguish whether they are an omission or are missing such
+    that you want them deleted. Run ``github-collective`` in ``pretend``
+    mode first if you're unsure what will happen!
+
+
 Local Identifiers
 -----------------
 
