@@ -47,6 +47,19 @@ Features
 Configuration 
 =============
 
+``github-collective`` uses a text-based ini-style configuration in typical
+Python-based style. Essentially, you define a number of sections, each
+with various options, and the script will parse your configuration and
+create or update what's on GitHub.
+
+You can consult one of these examples:
+
+* https://raw.github.com/collective/github-collective/master/example.cfg
+* http://collective.github.com/permissions.cfg
+
+to get an idea on how to construct your configuration. Read on for specifics
+regarding the idividual sections and the available options.
+
 Local Identifiers
 -----------------
 
@@ -368,8 +381,8 @@ usage easier to manage.
 Usage
 =====
 
-When ``github-collective`` is installed it should create executable with same
-name in your `bin` directory. 
+When ``github-collective`` is installed it should create an executable with
+same name in your `bin` directory. 
 ::
 
     % bin/github-collective --help
@@ -400,18 +413,8 @@ name in your `bin` directory.
       -v, --verbose
       -p, --pretend
 
-Configuration
-=============
-
-You can consult one of these examples:
-
-* https://raw.github.com/collective/github-collective/master/example.cfg
-* http://collective.github.com/permissions.cfg
-
-to get an idea on how to construct your configuration. 
-
-Example of configuration stored locally
----------------------------------------
+Locally-stored configuration
+----------------------------
 
 ::
 
@@ -421,8 +424,8 @@ Example of configuration stored locally
         -u garbas \      # account that has management right for organization
         -P PASSWORD      # account password
 
-Example of configuration stored on github
------------------------------------------
+Remotely-stored configuration (GitHub)
+--------------------------------------
 
 ::
 
@@ -433,8 +436,8 @@ Example of configuration stored on github
         -u garbas \      # account that has management right for organization
         -P PASSWORD      # account password
 
-Example of cached configuration
--------------------------------
+Cached configuration
+--------------------
 
 ::
 
@@ -449,7 +452,8 @@ Example of cached configuration
 
 Todo
 ====
-
+ 
+ - Allow repositories to be deleted using V3 API.
  - Send emails to owners about removing repos
  - better logging mechanism (eg. logbook)
 
