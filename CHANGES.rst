@@ -9,6 +9,9 @@ Changelog
    your configuration, it will now be deleted. Run the command in
    `pretend` mode first if unsure.
    [davidjb]
+ - Optimise deletion process to not clear cache when attempting to 
+   delete.
+   [davidjb]
  - Updating to depend on ``requests==0.13.1``.
    [davidjb] 
 
