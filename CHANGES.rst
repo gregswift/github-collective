@@ -9,6 +9,8 @@ Changelog
    your configuration, it will now be deleted. Run the command in
    `pretend` mode first if unsure.
    [davidjb]
+ - Updating to depend on ``requests==0.13.1``.
+   [davidjb] 
 
 
 0.2 (2012-06-22)
