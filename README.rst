@@ -464,6 +464,9 @@ Cached configuration
 Todo
 ====
  
+ - Add support for Buildout-style variable substitution
+ - Support storing configuration options locally (eg repo options that don't 
+   get sent to GitHub)
  - Send emails to owners about removing repos
  - better logging mechanism (eg. logbook)
 
