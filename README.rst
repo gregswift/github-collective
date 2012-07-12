@@ -464,7 +464,6 @@ Cached configuration
 Todo
 ====
  
- - Allow repositories to be deleted using V3 API.
  - Send emails to owners about removing repos
  - better logging mechanism (eg. logbook)
 
