@@ -98,6 +98,7 @@ As an illustrated example::
     owners = ${:main-user}
     homepage = ${config:my-url}
     hooks = travis-ci
+    hooks-events = push
     main-user = davidjb
     travis-user = ${:owners}
     travis-ci-token = b8cd21c6317a51eeaa752802a0c04454
@@ -109,13 +110,14 @@ As an illustrated example::
         "user": "${repo:travis-user}",
         "token": "${repo:travis-ci-token}"
         }
-    events = push
+    events = ${repo:my-repo:hooks-events}
     active = true
 
 In the above example, we demonstrate all types of substitution:
     
 `Global`
-    ``${config-my-url}``, which refers to a fully-qualified section and option.
+    ``${config:my-url}`` and ``${repo:my-repo:hooks-events}``, which refers to
+    a fully-qualified section and option.
 `Same section`
     ``${:main-user}``, which refers to an option in the same section.
 `Local`
