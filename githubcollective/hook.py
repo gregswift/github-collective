@@ -11,7 +11,10 @@ class Hook(object):
         #Handle case of unicode coming from GitHub
         self.name = unicode(self.name)
         if isinstance(self.config, str):
-            self.config = json.loads(self.config)
+            try:
+                self.config = json.loads(self.config)
+            except ValueError:
+                raise ValueError("Error parsing JSON config for %r" % self)
 
     def __repr__(self):
         return '<Hook "%s">' % self.name

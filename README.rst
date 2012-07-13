@@ -44,6 +44,8 @@ Features
 
 * Automatically syncs all of the above with GitHub when the tool is run.
 
+* Buildout-style variable substitution in the form ``${section:option}``.
+
 Configuration 
 =============
 
@@ -70,7 +72,6 @@ regarding the idividual sections and the available options.
     that you want them deleted. Run ``github-collective`` in ``pretend``
     mode first if you're unsure what will happen!
 
-
 Local Identifiers
 -----------------
 
@@ -80,6 +81,68 @@ just the identifier after the colon in the section name being referred to. For
 example, a section of ``[team:my-awesome-team]`` would be referenced in the
 ``teams`` option as just ``my-awesome-team``. If the option in question 
 calls for a list, then each value in the list should follow this.
+
+Variable Substitution
+---------------------
+
+``github-collective`` implements `Buildout`_-style variable substitution in
+the form ``${my-section:option}``, which will automatically resolve to the value
+of ``option`` within the ``[my-section]`` section of your configuration. 
+
+As an illustrated example::
+    
+    [config]
+    my-url = http://example.org/
+
+    [repo:my-repo]
+    owners = ${:main-user}
+    homepage = ${config:my-url}
+    hooks = travis-ci
+    main-user = davidjb
+    travis-user = ${:owners}
+    travis-ci-token = b8cd21c6317a51eeaa752802a0c04454
+    
+    [hook:travis-ci]
+    name = travis
+    config = 
+        {
+        "user": "${repo:travis-user}",
+        "token": "${repo:travis-ci-token}"
+        }
+    events = push
+    active = true
+
+In the above example, we demonstrate all types of substitution:
+    
+`Global`
+    ``${config-my-url}``, which refers to a fully-qualified section and option.
+`Same section`
+    ``${:main-user}``, which refers to an option in the same section.
+`Local`
+    ``${repo:travis-user}``, which refers to a local option that is resolved
+    at the time relevant section is processed, in the appropriate context.
+    At present, hooks are the only things that belong to repositories, so 
+    attempting to use such a field in anything other than a ``[hook:]`` 
+    context will not work.
+
+Options are resolved top-to-bottom within the configuration, with the exception
+of `Local` options that are resolved when instantiated (for instance,
+when the hook for a repo is created, as hooks exist per-repsository). So, in the
+example above, the parser will consider all options in ``[repo:my-repo]`` in
+the order they were defined, and then when adding ``[hook:travis-ci]`` to the
+repository, `Local` options will be resolved in the context of said repository.
+Doing so means you are able to have one common hook configuration, but have
+`per-repository` configuration options, such as those for Travis-CI tokens, 
+passwords, URLs, and more.
+
+Keep in mind that there are no restrictions on arbitrary section names so
+your variable storage can be unbounded.  This also means you could conceivably
+utilise the same configuration file for multiple purposes (such as for 
+``github-collective`` and a Paster application) and share variables.
+
+Substitution will attempt to alert you of circular dependencies and provide
+some explaination why a substitution is failing in the form of a raised Python
+exception with suitable details.
 
 Repositories
 ------------
@@ -464,7 +527,7 @@ Cached configuration
 Todo
 ====
  
- - Add support for Buildout-style variable substitution
+ - Substitution and other unit testing
  - Support storing configuration options locally (eg repo options that don't 
    get sent to GitHub)
  - Send emails to owners about removing repos
@@ -478,6 +541,7 @@ Credits
 :Contributor: `David Beitey`_ (davidjb)
 
 
+.. _`Buildout`: http://pypi.python.org/pypi/zc.buildout/1.5.2#configuration-file-syntax
 .. _`GitHub organizations`: https://github.com/blog/674-introducing-organizations
 .. _`GitHub Repos API`: http://developer.github.com/v3/repos/#create
 .. _`GitHub Hooks API`: http://developer.github.com/v3/repos/hooks/

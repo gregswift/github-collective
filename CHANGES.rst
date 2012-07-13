@@ -4,6 +4,8 @@ Changelog
 0.3 (unreleased)
 ----------------
 
+ - Implement Buildout-style variable substitution for configuration.
+   [davidjb]
  - Implement deletion of repos from configuration now GitHub API v3 
    supports this. *Warning*: if a repo exists on GitHub but not in 
    your configuration, it will now be deleted. Run the command in

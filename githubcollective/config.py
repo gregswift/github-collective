@@ -4,7 +4,9 @@ try:
 except:
     import json
 
+import itertools
 import os
+import re
 import requests
 import ConfigParser
 import StringIO
@@ -17,6 +19,7 @@ from githubcollective.hook import Hook, HOOK_BOOL_OPTIONS
 BASE_URL = 'https://api.github.com'
 TEAM_PREFIX = '--auto-'
 TEAM_OWNERS_SUFFIX = '-owners'
+LOCAL_SECTION_PREFIXES = ('repo',)
 
 
 class Config(object):
@@ -110,12 +113,69 @@ class Config(object):
         return self._fork_urls.get(repo, None)
 
 
+_template_split = re.compile('([$]{[^}]*?})').split
+
+def _do_sub(value, config, current_section=None, stack=(), local=False):
+    """Carry out subsitution of values in the form ${section:option}.
+
+    `value`: the original value to have substitution applied.
+    `config`: an instance of a ConfigParser.
+    `current_section`: the identifier of the current context (used to
+    determine empty section name lookups).
+    `stack`: the current tuple of fields inspected through recursion.
+    `local`: resolve local references (eg Hook references Repo) against
+    the given ``current_section``.
+
+    Strongly influenced by what ``zc.buildout`` does.
+    """
+    parts = _template_split(value)
+    subs = []
+    for ref in parts[1::2]:
+        option_parts = tuple(ref[2:-1].rsplit(':', 1))
+        if len(option_parts) < 2:
+            raise ValueError("The substitution %s is missing a colon." % ref)
+        section, option = option_parts
+
+        #Support ${:option} and ${repo:option} syntaxes
+        if not section or local:
+            section = current_section
+
+        #Only lookup now if substituting from global config
+        if section not in LOCAL_SECTION_PREFIXES:
+            sub = config.get(section, option)
+
+            #Recurse accordingly to resolve nested substitution
+            if '${' in sub:
+                if ref in stack:
+                    raise ValueError(
+                        "Circular reference in substitutions."
+                    )
+                sub = _do_sub(sub, config, section, stack + (ref,))
+            subs.append(sub)
+        #Leave alone until we process the context
+        else:
+            subs.append(ref)
+    subs.append('')
+
+    #Rejoin normal parts and resolved substititions
+    substitution = ''.join([''.join(v) for v in zip(parts[::2], subs)])
+    return substitution
+
+
 class ConfigCFG(Config):
+
 
     def parse(self, data):
         teams, repos, fork_urls = {}, {}, {}
         config = ConfigParser.SafeConfigParser()
         config.readfp(StringIO.StringIO(data))
+
+        # global substitutions in ${section:option} style
+        for section in config.sections():
+            for option, value in config.items(section):
+                if '${' in value:
+                    sub_value = _do_sub(value, config, section)
+                    config.set(section, option, sub_value)
 
         for section in config.sections():
             if section.startswith('repo:'):
@@ -137,17 +197,27 @@ class ConfigCFG(Config):
                 if config.has_option(section, 'hooks'):
                     for hook in config.get(section, 'hooks').split():
                         hook_section = 'hook:%s' % hook
-                        hook_config = dict(config.items(hook_section))
-                        # coerce values into correct formats
-                        hook_config['config'] = \
-                                hook_config['config'].replace('\n', '')
-                        if 'events' in hook_config:
-                            hook_config['events'] = \
-                                    hook_config['events'].split()
-                        for option in HOOK_BOOL_OPTIONS:
-                            if option in hook_config:
-                                hook_config[option] = config.getboolean(
-                                    hook_section, option)
+                        hook_config = {}
+                        for config_key, config_value in config.items(hook_section):
+                            # local variable substitution
+                            if '${' in config_value:
+                                config_value = _do_sub(config_value,
+                                                       config,
+                                                       section,
+                                                       local=True)
+                                config.set(hook_section, config_key, config_value)
+
+                            # coerce values into correct formats
+                            if config_key == 'config':
+                                config_value = config_value.replace('\n', '')
+                            elif config_key == 'events':
+                                config_value = config_value.split()
+
+                            if config_key in HOOK_BOOL_OPTIONS:
+                                config_value = config.getboolean(hook_section,
+                                                                 config_key)
+                            hook_config[config_key] = config_value
+
                         hooks.append(Hook(**hook_config))
 
                 repos[name] = Repo(name=name, hooks=hooks, **repo_config)
