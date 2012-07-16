@@ -4,7 +4,6 @@ try:
 except:
     import json
 
-import itertools
 import os
 import re
 import requests
@@ -115,16 +114,16 @@ class Config(object):
 
 _template_split = re.compile('([$]{[^}]*?})').split
 
-def _do_sub(value, config, current_section=None, stack=(), local=False):
+def substitute(value, config, context=None, local=False, stack=()):
     """Carry out subsitution of values in the form ${section:option}.
 
     `value`: the original value to have substitution applied.
     `config`: an instance of a ConfigParser.
-    `current_section`: the identifier of the current context (used to
+    `context`: the identifier of the current section context (used to
     determine empty section name lookups).
     `stack`: the current tuple of fields inspected through recursion.
     `local`: resolve local references (eg Hook references Repo) against
-    the given ``current_section``.
+    the given ``context``.
 
     Strongly influenced by what ``zc.buildout`` does.
     """
@@ -138,7 +137,7 @@ def _do_sub(value, config, current_section=None, stack=(), local=False):
 
         #Support ${:option} and ${repo:option} syntaxes
         if not section or local:
-            section = current_section
+            section = context
 
         #Only lookup now if substituting from global config
         if section not in LOCAL_SECTION_PREFIXES:
@@ -150,7 +149,7 @@ def _do_sub(value, config, current_section=None, stack=(), local=False):
                     raise ValueError(
                         "Circular reference in substitutions."
                     )
-                sub = _do_sub(sub, config, section, stack + (ref,))
+                sub = substitute(sub, config, section, stack + (ref,))
             subs.append(sub)
         #Leave alone until we process the context
         else:
@@ -160,6 +159,22 @@ def _do_sub(value, config, current_section=None, stack=(), local=False):
     #Rejoin normal parts and resolved substititions
     substitution = ''.join([''.join(v) for v in zip(parts[::2], subs)])
     return substitution
+
+def global_substitute(config):
+    """Take care of all global configuration substitutions.
+
+    This function will not adjust `local` substitions as these
+    cannot be resolved until a relevant context is available later.
+    `config` will be modified in place.
+    """
+    for section in config.sections():
+        for option, value in config.items(section):
+            if '${' in value:
+                sub_value = substitute(value=value,
+                                       config=config,
+                                       context=section,
+                                       local=False)
+                config.set(section, option, sub_value)
 
 
 class ConfigCFG(Config):
@@ -171,11 +186,7 @@ class ConfigCFG(Config):
         config.readfp(StringIO.StringIO(data))
 
         # global substitutions in ${section:option} style
-        for section in config.sections():
-            for option, value in config.items(section):
-                if '${' in value:
-                    sub_value = _do_sub(value, config, section)
-                    config.set(section, option, sub_value)
+        global_substitute(config)
 
         for section in config.sections():
             if section.startswith('repo:'):
@@ -201,10 +212,10 @@ class ConfigCFG(Config):
                         for config_key, config_value in config.items(hook_section):
                             # local variable substitution
                             if '${' in config_value:
-                                config_value = _do_sub(config_value,
-                                                       config,
-                                                       section,
-                                                       local=True)
+                                config_value = substitute(value=config_value,
+                                                          config=config,
+                                                          context=section,
+                                                          local=True)
                                 config.set(hook_section, config_key, config_value)
 
                             # coerce values into correct formats

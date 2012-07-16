@@ -89,20 +89,65 @@ Variable Substitution
 the form ``${my-section:option}``, which will automatically resolve to the value
 of ``option`` within the ``[my-section]`` section of your configuration. 
 
-As an illustrated example::
-    
-    [config]
-    my-url = http://example.org/
+Here is our example configuration:
 
+    >>> configuration = """
+    ... [config]
+    ... my-domain = example.org
+    ... my-url = http://${:my-domain}/
+    ... 
+    ... [repo:my-repo]
+    ... owners = ${:main-user}
+    ... homepage = ${config:my-url}
+    ... hooks = travis-ci
+    ... main-user = my-user
+    ... travis-user = ${:owners}
+    ... travis-ci-token = b8cd21c6317a51eeaa752802a0c04454
+    ... 
+    ... [hook:travis-ci]
+    ... name = travis
+    ... config =
+    ...     {
+    ...     "user": "${repo:travis-user}",
+    ...     "token": "${repo:travis-ci-token}"
+    ...     }
+    ... events = push
+    ... active = true
+    ... """
+
+We can load this configuration to see the result:
+
+    >>> import ConfigParser
+    >>> import StringIO
+    >>> from githubcollective.config import substitute, global_substitute
+
+    >>> config = ConfigParser.SafeConfigParser()
+    >>> config.readfp(StringIO.StringIO(configuration))
+    >>> global_substitute(config)
+
+    >>> result = StringIO.StringIO()
+    >>> config.write(result)
+    >>> result.seek(0)
+
+Which, after global substitution is applied, will look like the following.
+Note that there are still some substitutions present - these are `Local`
+subsitutions and will be resolved in a `context` (in this case a repository
+context for the given hook options) when the revelant context is being
+interpreted.
+
+    >>> print result.read().replace('\t', '    ')
+    [config]
+    my-domain = example.org
+    my-url = http://example.org/
+    <BLANKLINE>
     [repo:my-repo]
-    owners = ${:main-user}
-    homepage = ${config:my-url}
+    owners = my-user
+    homepage = http://example.org/
     hooks = travis-ci
-    hooks-events = push
-    main-user = davidjb
-    travis-user = ${:owners}
+    main-user = my-user
+    travis-user = my-user
     travis-ci-token = b8cd21c6317a51eeaa752802a0c04454
-    
+    <BLANKLINE>
     [hook:travis-ci]
     name = travis
     config = 
@@ -110,22 +155,96 @@ As an illustrated example::
         "user": "${repo:travis-user}",
         "token": "${repo:travis-ci-token}"
         }
-    events = ${repo:my-repo:hooks-events}
+    events = push
     active = true
+    <BLANKLINE>
+    <BLANKLINE>
 
-In the above example, we demonstrate all types of substitution:
+We can now test our substitution functionality using this configuration
+as follows. We'll test this by re-initialising the original configuration
+before it had global subsitution applied.
+
+    >>> config = ConfigParser.SafeConfigParser()
+    >>> config.readfp(StringIO.StringIO(configuration))
+
+In the above example, we demonstrate all types of substitution, including
+substitutions that refer to other substitutions and ensure that these all
+can be resolved successfully.
     
-`Global`
-    ``${config:my-url}`` and ``${repo:my-repo:hooks-events}``, which refers to
-    a fully-qualified section and option.
-`Same section`
-    ``${:main-user}``, which refers to an option in the same section.
-`Local`
-    ``${repo:travis-user}``, which refers to a local option that is resolved
-    at the time relevant section is processed, in the appropriate context.
-    At present, hooks are the only things that belong to repositories, so 
-    attempting to use such a field in anything other than a ``[hook:]`` 
-    context will not work.
+Global options
+^^^^^^^^^^^^^^
+
+These options look like ``${config:my-url}`` and
+``${repo:my-repo:hooks-events}``, which refers to a fully-qualified section and
+option.
+
+For example, using the configuration above, you are able to refer to options
+like so:
+
+    >>> substitute('${config:my-domain}', config)
+    'example.org'
+
+    >>> substitute('${config:my-url}', config)
+    'http://example.org/'
+
+    >>> substitute('${repo:my-repo:main-user}', config)
+    'my-user'
+
+    >>> substitute('${hook:travis-ci:name}', config)
+    'travis'
+
+If you attempt to refer to a missing option or section, you'll be informed
+of this:
+
+    >>> substitute('${config:idontexist}', config)
+    ... # doctest: +ELLIPSIS
+    Traceback (most recent call last):
+        ...
+    NoOptionError: No option 'idontexist' in section: 'config'
+
+    >>> substitute('${idontexist:option}', config)
+    ... # doctest: +ELLIPSIS
+    Traceback (most recent call last):
+        ...
+    NoSectionError: No section: 'idontexist'
+    
+
+Options in same section
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Substitution can refer to another option within the same section by omitting
+the section name like so: ``${:main-user}``.
+
+Using the example configuration above, we see we can resolve options with
+a given context:
+
+    >>> substitute('${:main-user}', config, context='repo:my-repo')
+    'my-user'
+
+    >>> substitute('${:events}', config, context='hook:travis-ci')
+    'push'
+
+Local options
+^^^^^^^^^^^^^
+
+These are special options that look like ``${repo:travis-user}``, which refers
+to a local option that is resolved at the time relevant section is processed,
+in the appropriate context.  At present, hooks are the only things that belong
+to repositories, so attempting to use such a field in anything other than a
+``[hook:]`` context will not work.
+
+For example:
+
+    >>> substitute('${repo:travis-user}', config,
+    ...            context='repo:my-repo', local=True)
+    'my-user'
+
+    >>> substitute('${repo:travis-ci-token}', config,
+    ...            context='repo:my-repo', local=True)
+    'b8cd21c6317a51eeaa752802a0c04454'
+
+Ordering and options
+^^^^^^^^^^^^^^^^^^^^
 
 Options are resolved top-to-bottom within the configuration, with the exception
 of `Local` options that are resolved when instantiated (for instance,
@@ -525,11 +644,25 @@ Cached configuration
         -u garbas \      # account that has management right for organization
         -P PASSWORD      # account password
 
+Testing
+=======
+
+``nose`` is utilised for testing and configuration for ``nose`` exists
+within the ``setup.cfg`` file within this project.  This configuration
+automatically examines files for tests within the project, including
+this read-me itself. You can initialise and run tests using the Buildout
+configuration provided::
+
+    git clone git://github.com/collective/github-collective.git
+    cd github-collective
+    virtualenv .
+    python boostrap.py
+    bin/buildout
+    bin/nosetests
 
 Todo
 ====
  
- - Substitution and other unit testing
  - Support storing configuration options locally (eg repo options that don't 
    get sent to GitHub)
  - Send emails to owners about removing repos

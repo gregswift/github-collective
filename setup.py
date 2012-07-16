@@ -30,6 +30,9 @@ setup(
         'argparse',
         'requests==0.13.1',
         ],
+    extras_require={
+        'test': ['nose']
+    },
     entry_points="""
         [console_scripts]
         github-collective = githubcollective:run
