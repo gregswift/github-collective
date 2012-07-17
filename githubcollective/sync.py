@@ -103,7 +103,7 @@ class Sync(object):
                                 #Adding a new hook
                                 self.add_repo_hook(old, old_repo, hook)
                                 if self.verbose:
-                                    print '    - %s - ADDED HOOK: %s (%r)' \
+                                    print '  - %s - ADDED HOOK: %s (%r)' \
                                             % (repo, hook.name, hook.config)
 
         # CREATE TEAMS
