@@ -195,6 +195,7 @@ class Sync(object):
         return self.github._gh_org_create_repo(repo)
 
     def add_repo_hook(self, config, repo, hook):
+        config._repos[repo.name].hooks.append(hook)
         return self.github._gh_org_create_repo_hook(repo, hook)
 
     def remove_repo(self, config, repo):

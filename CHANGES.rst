@@ -4,6 +4,9 @@ Changelog
 0.4 (unreleased)
 ----------------
 
+- Fix issue with hooks being updated from cache by storing the
+  existing integer ID.
+  [davidjb]
 - Fix issue with cache not being updated on repo change.
   [davidjb]
 

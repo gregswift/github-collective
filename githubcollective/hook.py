@@ -1,7 +1,7 @@
 import json
 
 HOOK_BOOL_OPTIONS = ('active',)
-HOOK_OPTIONS = HOOK_BOOL_OPTIONS + ('name', 'config', 'events')
+HOOK_OPTIONS = HOOK_BOOL_OPTIONS + ('id', 'name', 'config', 'events')
 
 class Hook(object):
 
