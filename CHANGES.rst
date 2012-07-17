@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.4 (unreleased)
-----------------
+0.3.2 (2012-07-17)
+------------------
 
 - Fix issue with templating of hook variables. Previously,
   the original config was being altered, preventing further
