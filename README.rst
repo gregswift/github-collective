@@ -652,6 +652,20 @@ Cached configuration
         -u garbas \      # account that has management right for organization
         -P PASSWORD      # account password
 
+Gotchas
+=======
+
+* URLs specified within the configuration should possess a trailing slash 
+  where appropriate, for instance ``http://example.com`` (no trailing slash)
+  will, when returned by GitHub, become ``http://example.com/``. This means
+  that your configuration files will appear out of sync and thus
+  ``github-collective`` will attempt to update every run.
+
+* Boolean values stored within JSON Hook configuration should be either
+  ``0`` or ``1`` and strings, as this is what GitHub stores. Read the section
+  on `Service hooks`_ for more information.
+
+
 Testing
 =======
 
