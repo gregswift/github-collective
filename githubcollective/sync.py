@@ -202,7 +202,7 @@ class Sync(object):
         return self.github._gh_org_remove_repo(repo)
 
     def edit_repo(self, config, repo, changes):
-        config._repos[repo.name] = repo
+        config._repos[repo.name].__dict__.update(changes)
         return self.github._gh_org_edit_repo(repo, changes)
 
     def edit_repo_hook(self, config, repo, hook_id, hook):
