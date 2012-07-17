@@ -4,7 +4,8 @@ Changelog
 0.3 (unreleased)
 ----------------
 
- - Implement Buildout-style variable substitution for configuration.
+ - Implement Buildout-style variable substitution for configuration with
+   doctesting.
    [davidjb]
  - Implement deletion of repos from configuration now GitHub API v3 
    supports this. *Warning*: if a repo exists on GitHub but not in 
@@ -13,6 +14,8 @@ Changelog
    [davidjb]
  - Optimise deletion process to not clear cache when attempting to 
    delete.
+   [davidjb]
+ - Add extras_require option for testing to use ``nose``.
    [davidjb]
  - Updating to depend on ``requests==0.13.1``.
    [davidjb] 
