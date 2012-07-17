@@ -1,6 +1,6 @@
 from setuptools import setup
 
-version = '0.3.dev0'
+version = '0.3'
 
 setup(
     name='github-collective',

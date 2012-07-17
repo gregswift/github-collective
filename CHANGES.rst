@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.3 (unreleased)
+0.3 (2012-07-17)
 ----------------
 
  - Implement Buildout-style variable substitution for configuration with
