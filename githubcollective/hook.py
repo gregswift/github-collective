@@ -1,6 +1,7 @@
 import json
 
 HOOK_BOOL_OPTIONS = ('active',)
+HOOK_OPTIONS = HOOK_BOOL_OPTIONS + ('name', 'config', 'events')
 
 class Hook(object):
 
@@ -23,4 +24,5 @@ class Hook(object):
         return self.__repr__()
 
     def dumps(self):
-        return self.__dict__
+        return dict((k, v) for k, v in self.__dict__.iteritems()
+                    if k in HOOK_OPTIONS)

@@ -4,6 +4,8 @@ Changelog
 0.4 (unreleased)
 ----------------
 
+- Only send API options to GitHub to reduce overhead.
+  [davidjb]
 - Display output of changes to configuration when running in verbose 
   mode. This helps track down oddities with GitHub value storage to
   reduce overhead.

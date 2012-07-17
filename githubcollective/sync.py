@@ -5,7 +5,7 @@ except:
     import json
 
 from githubcollective.team import Team
-from githubcollective.repo import REPO_RESERVED_OPTIONS
+from githubcollective.repo import REPO_OPTIONS
 
 
 class Sync(object):
@@ -58,8 +58,7 @@ class Sync(object):
             changes = {}
             #Go through differences and create dict of changes
             #Settings removed from config are not modified
-            for setting in set(vars(new_repo).keys()) \
-                           - set(REPO_RESERVED_OPTIONS):
+            for setting in set(vars(new_repo).keys()).intersection(REPO_OPTIONS):
                 if not hasattr(old_repo, setting) or \
                    getattr(old_repo, setting) != getattr(new_repo, setting):
                     changes[setting] = getattr(new_repo, setting)

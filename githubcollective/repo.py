@@ -1,5 +1,6 @@
 REPO_RESERVED_OPTIONS = ('fork', 'owners', 'teams', 'hooks')
 REPO_BOOL_OPTIONS = ('private', 'has_issues', 'has_wiki', 'has_downloads')
+REPO_OPTIONS = REPO_BOOL_OPTIONS + ('name', 'description', 'homepage', 'team_id')
 
 class Repo(object):
 
@@ -13,8 +14,9 @@ class Repo(object):
         return self.__repr__()
 
     def dumps(self):
-        dump = self.__dict__.copy()
-        dump['hooks'] = [hook.dumps() for hook in dump['hooks']]
+        dump = dict((k, v) for k, v in self.__dict__.iteritems()
+                    if k in REPO_OPTIONS)
+        dump['hooks'] = [hook.dumps() for hook in self.hooks]
         return dump
 
     def getGroupedHooks(self):
