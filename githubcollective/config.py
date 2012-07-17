@@ -146,10 +146,14 @@ def substitute(value, config, context=None, local=False, stack=()):
             #Recurse accordingly to resolve nested substitution
             if '${' in sub:
                 if ref in stack:
+                    circle = ' --> '.join(stack + (ref,) )
                     raise ValueError(
-                        "Circular reference in substitutions."
+                        "Circular reference in substitutions %s." % circle
                     )
-                sub = substitute(sub, config, section, stack + (ref,))
+                sub = substitute(value=sub,
+                                 config=config,
+                                 context=section,
+                                 stack=stack + (ref,))
             subs.append(sub)
         #Leave alone until we process the context
         else:
@@ -176,17 +180,22 @@ def global_substitute(config):
                                        local=False)
                 config.set(section, option, sub_value)
 
+def load_config(data):
+    """Load configuration using string data."""
+    config = ConfigParser.SafeConfigParser()
+    config.readfp(StringIO.StringIO(data))
+    return config
 
 class ConfigCFG(Config):
 
 
     def parse(self, data):
         teams, repos, fork_urls = {}, {}, {}
-        config = ConfigParser.SafeConfigParser()
-        config.readfp(StringIO.StringIO(data))
+        config = load_config(data)
 
         # global substitutions in ${section:option} style
         global_substitute(config)
+        import ipdb; ipdb.set_trace()
 
         for section in config.sections():
             if section.startswith('repo:'):

@@ -117,14 +117,13 @@ Here is our example configuration:
 
 We can load this configuration to see the result:
 
-    >>> import ConfigParser
-    >>> import StringIO
+    >>> from githubcollective.config import load_config
     >>> from githubcollective.config import substitute, global_substitute
 
-    >>> config = ConfigParser.SafeConfigParser()
-    >>> config.readfp(StringIO.StringIO(configuration))
+    >>> config = load_config(configuration)
     >>> global_substitute(config)
 
+    >>> import StringIO
     >>> result = StringIO.StringIO()
     >>> config.write(result)
     >>> result.seek(0)
@@ -164,8 +163,7 @@ We can now test our substitution functionality using this configuration
 as follows. We'll test this by re-initialising the original configuration
 before it had global subsitution applied.
 
-    >>> config = ConfigParser.SafeConfigParser()
-    >>> config.readfp(StringIO.StringIO(configuration))
+    >>> config = load_config(configuration)
 
 In the above example, we demonstrate all types of substitution, including
 substitutions that refer to other substitutions and ensure that these all
@@ -264,6 +262,20 @@ utilise the same configuration file for multiple purposes (such as for
 Substitution will attempt to alert you of circular dependencies and provide
 some explaination why a substitution is failing in the form of a raised Python
 exception with suitable details.
+
+    >>> broken_config = """
+    ... [config]
+    ... my-domain = ${:my-url}
+    ... my-location = ${:my-domain}
+    ... my-url = ${:my-location}
+    ... """
+
+    >>> broken = load_config(broken_config)
+    >>> global_substitute(broken)
+    ... # doctest: +ELLIPSIS
+    Traceback (most recent call last):
+        ...
+    ValueError: Circular reference in substitutions ${:my-url} --> ${:my-location} --> ${:my-domain} --> ${:my-url}.
 
 Repositories
 ------------
