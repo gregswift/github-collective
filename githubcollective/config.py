@@ -186,8 +186,15 @@ def load_config(data):
     config.readfp(StringIO.StringIO(data))
     return config
 
-class ConfigCFG(Config):
+def output_config(config):
+    """Output configuration back to string."""
+    result = StringIO.StringIO()
+    config.write(result)
+    result.seek(0)
+    return result.read().replace('\t', '    ')
 
+
+class ConfigCFG(Config):
 
     def parse(self, data):
         teams, repos, fork_urls = {}, {}, {}
@@ -195,6 +202,9 @@ class ConfigCFG(Config):
 
         # global substitutions in ${section:option} style
         global_substitute(config)
+        if self.verbose:
+            print 'RESOLVED CONFIGURATION:\n'
+            print output_config(config)
 
         for section in config.sections():
             if section.startswith('repo:'):

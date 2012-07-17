@@ -123,18 +123,14 @@ We can load this configuration to see the result:
     >>> config = load_config(configuration)
     >>> global_substitute(config)
 
-    >>> import StringIO
-    >>> result = StringIO.StringIO()
-    >>> config.write(result)
-    >>> result.seek(0)
-
 Which, after global substitution is applied, will look like the following.
 Note that there are still some substitutions present - these are `Local`
 subsitutions and will be resolved in a `context` (in this case a repository
 context for the given hook options) when the revelant context is being
 interpreted.
 
-    >>> print result.read().replace('\t', '    ')
+    >>> from githubcollective.config import output_config
+    >>> print output_config(config)
     [config]
     my-domain = example.org
     my-url = http://example.org/

@@ -5,7 +5,9 @@ Changelog
 ----------------
 
  - Implement Buildout-style variable substitution for configuration with
-   doctesting.
+   doctesting. 
+   [davidjb]
+ - Output resolved configuration when running in verbose mode.
    [davidjb]
  - Implement deletion of repos from configuration now GitHub API v3 
    supports this. *Warning*: if a repo exists on GitHub but not in 
