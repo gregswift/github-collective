@@ -87,7 +87,6 @@ class Sync(object):
                                 new_hook_config.update(vars(hook))
                                 if old_hook_config != new_hook_config:
                                     #If any difference at all, update server
-                                    import ipdb; ipdb.set_trace()
                                     self.edit_repo_hook(old,
                                                         old_repo,
                                                         old_hook.id,
