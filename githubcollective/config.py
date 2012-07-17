@@ -195,7 +195,6 @@ class ConfigCFG(Config):
 
         # global substitutions in ${section:option} style
         global_substitute(config)
-        import ipdb; ipdb.set_trace()
 
         for section in config.sections():
             if section.startswith('repo:'):
