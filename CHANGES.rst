@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.4 (unreleased)
-----------------
+0.3.1 (2012-07-17)
+------------------
 
 - Only send API options to GitHub to reduce overhead.
   [davidjb]
