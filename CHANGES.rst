@@ -4,6 +4,10 @@ Changelog
 0.4 (unreleased)
 ----------------
 
+- Fix issue with templating of hook variables. Previously,
+  the original config was being altered, preventing further
+  templating.
+  [davidjb]
 - Fix issue with hooks being updated from cache by storing the
   existing integer ID.
   [davidjb]

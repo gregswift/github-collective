@@ -234,7 +234,6 @@ class ConfigCFG(Config):
                                                           config=config,
                                                           context=section,
                                                           local=True)
-                                config.set(hook_section, config_key, config_value)
 
                             # coerce values into correct formats
                             if config_key == 'config':
