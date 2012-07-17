@@ -4,7 +4,8 @@ Changelog
 0.4 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Fix issue with cache not being updated on repo change.
+  [davidjb]
 
 
 0.3.1 (2012-07-17)
