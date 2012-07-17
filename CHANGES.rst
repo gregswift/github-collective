@@ -4,7 +4,10 @@ Changelog
 0.4 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Display output of changes to configuration when running in verbose 
+  mode. This helps track down oddities with GitHub value storage to
+  reduce overhead.
+  [davidjb]
 
 
 0.3 (2012-07-17)

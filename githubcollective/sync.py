@@ -67,6 +67,11 @@ class Sync(object):
                 self.edit_repo(old, old_repo, changes)
                 if self.verbose:
                     print '    - %s' % repo
+                    for change, changed_value in changes.items():
+                        old_value = getattr(old_repo, change, None)
+                        print '      - %s was %r, now %r' % (change,
+                                                             old_value,
+                                                             changed_value)
 
             #Go through hooks for changes
             #Hooks removed from configuration are left alone as
@@ -94,6 +99,7 @@ class Sync(object):
                                     if self.verbose:
                                         print '  - %s - EDITED HOOK: %s (%r)' \
                                             % (repo, hook.name, hook.config)
+
                             else:
                                 #Adding a new hook
                                 self.add_repo_hook(old, old_repo, hook)

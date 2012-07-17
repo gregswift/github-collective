@@ -121,9 +121,10 @@ class Github(object):
                                   json.dumps(hook.dumps()))
 
     def _gh_org_edit_repo(self, repo, changes):
-        changes.update({'name': repo.name}) #Required by API
+        _changes = changes.copy()
+        _changes.update({'name': repo.name}) #Required by API
         return self._patch_request('/repos/%s/%s' % (self.org, repo.name),
-                                   json.dumps(changes))
+                                   json.dumps(_changes))
 
     def _gh_org_edit_repo_hook(self, repo, hook_id, hook):
         return self._patch_request('/repos/%s/%s/hooks/%i' % \
