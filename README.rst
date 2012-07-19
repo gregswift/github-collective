@@ -685,10 +685,11 @@ configuration provided::
 Todo
 ====
  
- - Support storing configuration options locally (eg repo options that don't 
-   get sent to GitHub)
- - Send emails to owners about removing repos
- - better logging mechanism (eg. logbook)
+- Allow configuration of organisation settings via API
+- Send emails to owners about removing repos
+- Better logging mechanism (eg. logbook)
+- Support configuration extensibility (eg ``extends = `` syntax) for
+  using multiple configuration files.
 
 
 Credits
