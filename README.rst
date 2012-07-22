@@ -682,6 +682,16 @@ configuration provided::
     bin/buildout
     bin/nosetests
 
+Issues and Contributing
+=======================
+
+Report issues via this project's GitHub issue tracker at
+https://github.com/collective/github-collective/issues.
+
+Contribute by submitting a pull request on GitHub or else by
+adding yourself to the `Collective <http://collective.github.com>`_
+and contributing directly.
+
 Todo
 ====
  
