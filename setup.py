@@ -7,6 +7,8 @@ setup(
     version=version,
     description="Script to manage GitHub organizations in a collective manner",
     long_description=open("README.rst").read() + "\n" + \
+                     open("docs/usage.rst").read() + "\n" + \
+                     open("docs/etc.rst").read() + "\n" + \
                      open("CHANGES.rst").read(),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
