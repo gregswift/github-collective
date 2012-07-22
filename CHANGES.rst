@@ -4,7 +4,8 @@ Changelog
 0.4 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Read the Docs-ified documentation.
+  [davidjb]
 
 
 0.3.2 (2012-07-17)
