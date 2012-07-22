@@ -191,7 +191,7 @@ def output_config(config):
     result = StringIO.StringIO()
     config.write(result)
     result.seek(0)
-    return result.read().replace('\t', '    ')
+    return result.read().expandtabs(4)
 
 
 class ConfigCFG(Config):
