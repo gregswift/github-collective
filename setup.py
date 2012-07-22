@@ -33,7 +33,8 @@ setup(
         'requests==0.13.1',
         ],
     extras_require={
-        'test': ['nose']
+        'test': ['nose'],
+        'docs': ['Sphinx']
     },
     entry_points="""
         [console_scripts]
