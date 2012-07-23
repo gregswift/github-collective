@@ -1,2 +1,0 @@
-include README.rst LICENSE.txt CHANGES.rst
-recursive-include githubcollective *.py

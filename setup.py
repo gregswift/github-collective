@@ -28,6 +28,9 @@ setup(
     packages=['githubcollective'],
     include_package_data=True,
     zip_safe=False,
+    setup_requires=[
+        'setuptools-git',
+    ],
     install_requires=[
         'argparse',
         'requests==0.13.1',
