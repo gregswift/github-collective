@@ -28,6 +28,10 @@ Features
 * Create one central configuration that you can sync to GitHub to configure
   your organisation's settings, repositories, teams, and more.
 
+  * Combine this with GitHub's fork-and-pull request model to easily
+    allow non-administrative users to create and manage repositories
+    with minimal overhead.
+
 * Repositories: create and modify repositories within an organization
 
   * Configure all repository properties as per the `GitHub Repos API`_,
