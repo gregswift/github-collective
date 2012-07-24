@@ -15,6 +15,18 @@ configuration provided::
     bin/buildout
     bin/nosetests
 
+`tox <http://tox.testrun.org/latest/>`_ is used to ensure this package
+installs correctly under each version of Python.  Currently we test 
+Python 2.6 and Python 2.7.  Support for running tests under ``tox`` will
+come shortly. To test installation::
+
+    git clone git://github.com/collective/github-collective.git
+    cd github-collective
+    virtualenv .
+    pip install tox
+    tox
+    
+
 Issues and Contributing
 =======================
 
