@@ -41,6 +41,7 @@ Todo
 ====
  
 - Allow configuration of organisation settings via API
+- Add facility to continue if error experienced
 - Send emails to owners about removing repos
 - Better logging mechanism (eg. logbook)
 - Support configuration extensibility (eg ``extends =`` syntax) for
