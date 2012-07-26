@@ -190,8 +190,7 @@ def output_config(config):
     """Output configuration back to string."""
     result = StringIO.StringIO()
     config.write(result)
-    result.seek(0)
-    return result.read().expandtabs(4)
+    return result.getvalue().expandtabs(4)
 
 
 class ConfigCFG(Config):
