@@ -4,6 +4,12 @@ Changelog
 0.4 (unreleased)
 ----------------
 
+- Allow forks to be correctly named once created. GitHub's API forks using
+  the same name originally, so we need to rename once forked.
+  [davidjb]
+- Add rename helper functionality to sync module. (Note that configuration 
+  does not yet support renaming)
+  [davidjb]
 - Read the Docs-ified documentation.
   [davidjb]
 

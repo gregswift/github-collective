@@ -213,9 +213,34 @@ class Sync(object):
         config._repos[repo.name].hooks[hook_index] = hook
         return self.github._gh_org_edit_repo_hook(repo, hook_id, hook)
 
+    def rename_repo(self, config, repo, new_name):
+        changes = {'name': new_name}
+        config._repos[new_name] = config._repos[repo.name]
+        del config._repos[repo.name]
+        response = self.github._gh_org_edit_repo(repo, changes)
+        config._repos[new_name].__dict__.update(changes)
+        return response
+
     def fork_repo(self, config, fork_url, repo):
+        response = self.github._gh_org_fork_repo(fork_url)
+        result = json.loads(response.text)
         config._repos[repo.name] = repo
-        return self.github._gh_org_fork_repo(fork_url)
+
+        # Check if we need to rename the fork - forks get the same
+        # name by default.
+        fork_name = result['name']
+        if repo.name != fork_name:
+            # Record the name the repo should be
+            target_name = repo.name
+
+            # Make our repo and config correctly represent the fork
+            config._repos[fork_name] = config._repos[repo.name]
+            del config._repos[repo.name]
+            repo.name = fork_name
+
+            response = self.rename_repo(config, repo, target_name)
+
+        return response
 
     def add_team(self, config, team):
         config._teams[team.name] = Team(

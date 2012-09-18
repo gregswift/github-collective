@@ -122,7 +122,10 @@ class Github(object):
 
     def _gh_org_edit_repo(self, repo, changes):
         _changes = changes.copy()
-        _changes.update({'name': repo.name}) #Required by API
+
+        if 'name' not in _changes:
+            _changes.update({'name': repo.name}) #Required by API
+
         return self._patch_request('/repos/%s/%s' % (self.org, repo.name),
                                    json.dumps(_changes))
 
