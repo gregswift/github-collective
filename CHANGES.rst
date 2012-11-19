@@ -4,6 +4,8 @@ Changelog
 0.4 (unreleased)
 ----------------
 
+- Ensure fork data payload (org name) is sent as JSON.
+  [davidjb]
 - Allow forks to be correctly named once created. GitHub's API forks using
   the same name originally, so we need to rename once forked.
   [davidjb]

@@ -107,7 +107,7 @@ class Github(object):
 
     def _gh_org_fork_repo(self, fork_url):
         return self._post_request('/repos/%s/forks' % fork_url,
-                {'org': self.org})
+                                  json.dumps({'org': self.org}))
 
     def _gh_org_create_repo(self, repo):
         return self._post_request('/orgs/%s/repos' % self.org,
