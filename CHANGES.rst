@@ -4,6 +4,9 @@ Changelog
 0.4 (unreleased)
 ----------------
 
+- Restore ability to fork repositories to organisations after unexpected
+  API change.
+  [davidjb]
 - Ensure fork data payload (org name) is sent as JSON.
   [davidjb]
 - Allow forks to be correctly named once created. GitHub's API forks using

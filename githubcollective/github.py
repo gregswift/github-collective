@@ -41,6 +41,7 @@ class Github(object):
         if data:
             kw['data'] = data
         response = method(**kw)
+
         self._request_count += 1
         self._request_limit = response.headers['x-ratelimit-limit']
         self._request_remaining = response.headers['x-ratelimit-remaining']
@@ -107,7 +108,7 @@ class Github(object):
 
     def _gh_org_fork_repo(self, fork_url):
         return self._post_request('/repos/%s/forks' % fork_url,
-                                  json.dumps({'org': self.org}))
+                                  json.dumps({'organization': self.org}))
 
     def _gh_org_create_repo(self, repo):
         return self._post_request('/orgs/%s/repos' % self.org,
