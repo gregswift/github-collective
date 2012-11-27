@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.4 (unreleased)
+0.4 (2012-11-28)
 ----------------
 
 - Restore ability to fork repositories to organisations after unexpected
