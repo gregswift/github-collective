@@ -10,10 +10,11 @@ from githubcollective.repo import REPO_OPTIONS
 
 class Sync(object):
 
-    def __init__(self, github, verbose=False, pretend=False):
+    def __init__(self, github, verbose=False, pretend=False, no_delete=False):
         self.github = github
         self.verbose = verbose
         self.pretend = pretend
+        self.not_delete = no_delete
 
     def run(self, new, old):
 
@@ -190,22 +191,41 @@ class Sync(object):
     #
     # github actions
 
+    def pretender(fn):
+        """ Return and eventually log to avoid destructive operations,
+            if we are in pretend mode.
+        """
+        def wrapped(*args, **kwargs):
+            if args[0].pretend:
+                if args[0].verbose:
+                    print 'INFO pretend mode'
+                return
+            else:
+                return fn(*args, **kwargs)
+        return wrapped
+
+    @pretender
     def add_repo(self, config, repo):
         config._repos[repo.name] = repo
         return self.github._gh_org_create_repo(repo)
 
+    @pretender
     def add_repo_hook(self, config, repo, hook):
         config._repos[repo.name].hooks.append(hook)
         return self.github._gh_org_create_repo_hook(repo, hook)
 
+    @pretender
     def remove_repo(self, config, repo):
+        if self.no_delete: return
         del config._repos[repo.name]
         return self.github._gh_org_remove_repo(repo)
 
+    @pretender
     def edit_repo(self, config, repo, changes):
         config._repos[repo.name].__dict__.update(changes)
         return self.github._gh_org_edit_repo(repo, changes)
 
+    @pretender
     def edit_repo_hook(self, config, repo, hook_id, hook):
         hook_ids = [getattr(h, 'id', None) \
                     for h in config._repos[repo.name].hooks]
@@ -213,6 +233,7 @@ class Sync(object):
         config._repos[repo.name].hooks[hook_index] = hook
         return self.github._gh_org_edit_repo_hook(repo, hook_id, hook)
 
+    @pretender
     def rename_repo(self, config, repo, new_name):
         changes = {'name': new_name}
         config._repos[new_name] = config._repos[repo.name]
@@ -221,6 +242,7 @@ class Sync(object):
         config._repos[new_name].__dict__.update(changes)
         return response
 
+    @pretender
     def fork_repo(self, config, fork_url, repo):
         response = self.github._gh_org_fork_repo(fork_url)
         result = json.loads(response.text)
@@ -242,6 +264,7 @@ class Sync(object):
 
         return response
 
+    @pretender
     def add_team(self, config, team):
         config._teams[team.name] = Team(
                 name=team.name,
@@ -256,6 +279,7 @@ class Sync(object):
             config._teams[team.name].id = team_dict['id']
         return response
 
+    @pretender
     def edit_team(self, config, team):
         config._teams[team.name].name = team.name
         config._teams[team.name].permission = team.permission
@@ -265,26 +289,34 @@ class Sync(object):
                 permission=team.permission,
                 )
 
+    @pretender
     def remove_team(self, config, team):
+        if self.no_delete: return
         del config._teams[team.name]
         return self.github._gh_org_delete_team(team.id)
 
+    @pretender
     def add_team_member(self, config, team, member):
         team = config.get_team(team.name)
         team.members.add(member)
         return self.github._gh_org_add_team_member(team.id, member)
 
+    @pretender
     def remove_team_member(self, config, team, member):
+        if self.no_delete: return
         team = config.get_team(team.name)
         team.members.remove(member)
         return self.github._gh_org_remove_team_member(team.id, member)
 
+    @pretender
     def add_team_repo(self, config, team, repo):
         team = config.get_team(team.name)
         team.repos.add(repo)
         return self.github._gh_org_add_team_repo(team.id, repo)
 
+    @pretender
     def remove_team_repo(self, config, team, repo):
+        if self.no_delete: return
         team = config.get_team(team.name)
         team.repos.remove(repo)
         return self.github._gh_org_remove_team_repo(team.id, repo)

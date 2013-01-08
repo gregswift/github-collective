@@ -4,7 +4,16 @@ Changelog
 0.5 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Add no_delete config option. We might not want to automatically delete repos,
+  teams ans members.
+  [thet]
+
+- Early return in pretend mode and fix error with empty result set.
+  [thet]
+
+- Bypass Github Hooks fetching, which was always failing. There seems to be an
+  API or docs error.
+  [thet]
 
 
 0.4 (2012-11-28)

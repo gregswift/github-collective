@@ -50,6 +50,7 @@ def run():
             help="github account password.")
     parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('-p', '--pretend', action='store_true')
+    parser.add_argument('-D', '--no_delete', action='store_true')
 
     args = parser.parse_args()
 
@@ -78,6 +79,7 @@ def run():
             github,
             args.verbose,
             args.pretend,
+            args.no_delete,
             ).run(new, old)
 
     if sync_ok:

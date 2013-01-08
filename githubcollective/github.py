@@ -104,7 +104,14 @@ class Github(object):
         return self._get_request('/orgs/%s/repos' % self.org)
 
     def _gh_org_repo_hooks(self, repo):
-        return self._get_request('/repos/%s/%s/hooks' % (self.org, repo))
+        try:
+            return self._get_request('/repos/%s/%s/hooks' % (self.org, repo))
+        except requests.exceptions.HTTPError, e:
+            # Bypass Github Hooks fetching, which was always failing.
+            # There seems to be an API or docs error.
+            if self.verbose:
+                print("WARNING: cannot get hooks for %s/%s" % (self.org, repo))
+            return []
 
     def _gh_org_fork_repo(self, fork_url):
         return self._post_request('/repos/%s/forks' % fork_url,
