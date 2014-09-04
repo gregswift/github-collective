@@ -14,7 +14,7 @@ class Sync(object):
         self.github = github
         self.verbose = verbose
         self.pretend = pretend
-        self.not_delete = no_delete
+        self.no_delete = no_delete
 
     def run(self, new, old):
 
