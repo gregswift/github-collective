@@ -20,10 +20,11 @@ class Github(object):
     _request_limit = 5000
     _request_remaining = 5000
 
-    def __init__(self, organization, username, password, verbose, pretend):
+    def __init__(self, organization, username, password, verbose, pretend, base_url=BASE_URL):
         self.org = organization
         self.verbose = verbose
         self.pretend = pretend
+        self.base_url = base_url
         self.headers = {
             'Authorization': 'Basic %s' % base64.encodestring(
                 '%s:%s' % (username, password)).replace('\n', ''),
@@ -36,7 +37,7 @@ class Github(object):
         headers = self.headers
         if method.func_name == 'put':
             headers['Content-Length'] = '0'
-        kw = {'url': BASE_URL + url + '?per_page=10000',
+        kw = {'url': self.base_url + url + '?per_page=10000',
               'headers': headers}
         if data:
             kw['data'] = data

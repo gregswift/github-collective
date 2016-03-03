@@ -42,6 +42,8 @@ def run():
     parser.add_argument('-C', '--cache', type=cache_type,
             help="path to file where to cache results from github.",
             default=None)
+    parser.add_argument('-U', '--github-url', type=str, required=True,
+            help="github base url.")
     parser.add_argument('-o', '--github-org', type=str, required=True,
             help="github organisation.")
     parser.add_argument('-u', '--github-username', type=str, required=True,
@@ -60,6 +62,7 @@ def run():
             args.github_password,
             args.verbose,
             args.pretend,
+            args.github_url
             )
 
     new = args.config[0](
