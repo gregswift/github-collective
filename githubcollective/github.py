@@ -44,8 +44,8 @@ class Github(object):
         response = method(**kw)
 
         self._request_count += 1
-        self._request_limit = response.headers['x-ratelimit-limit']
-        self._request_remaining = response.headers['x-ratelimit-remaining']
+        self._request_limit = response.headers.get('x-ratelimit-limit', None)
+        self._request_remaining = response.headers.get('x-ratelimit-remaining', None)
         if self.verbose:
             print '%s - %s/%s - %s - %s' % (
                 self._request_count,
