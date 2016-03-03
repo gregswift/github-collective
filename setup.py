@@ -33,7 +33,7 @@ setup(
     ],
     install_requires=[
         'argparse',
-        'requests==0.14.2',
+        'requests>=2.6.0',
         ],
     extras_require={
         'test': ['nose'],
