@@ -6,9 +6,13 @@
 .cache*
 bin/
 build/
+develop-eggs/
 dist/
 docs/_build
+.eggs/
 github_collective.egg-info/
 include/
+.installed.cfg
 lib/
 share/
+.tox/
