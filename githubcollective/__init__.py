@@ -50,6 +50,18 @@ def run():
             help="github account username.")
     parser.add_argument('-P', '--github-password', type=str, required=True,
             help="github account password.")
+    parser.add_argument('--no-team-prefix', dest='team_prefix',
+            action='store_false',
+            help='explicitly disable team prefix')
+    parser.add_argument('--team-prefix', dest='team_prefix',
+            help='prefix for team names',
+            default='--auto-')
+    parser.add_argument('--no-team-owner-suffix', dest='owner_suffix',
+            action='store_false',
+            help='explicitly disable team prefix')
+    parser.add_argument('--team-owner-suffix', dest='owner_suffix',
+            help='suffix for team names',
+            default='-owners')
     parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('-p', '--pretend', action='store_true')
     parser.add_argument('-D', '--no_delete', action='store_true')
