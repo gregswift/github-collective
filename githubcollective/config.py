@@ -16,14 +16,12 @@ from githubcollective.hook import Hook, HOOK_BOOL_OPTIONS
 
 
 BASE_URL = 'https://api.github.com'
-TEAM_PREFIX = '--auto-'
-TEAM_OWNERS_SUFFIX = '-owners'
 LOCAL_SECTION_PREFIXES = ('repo',)
 
 
 class Config(object):
 
-    def __init__(self, filename, verbose, pretend):
+    def __init__(self, filename, verbose, pretend, team_prefix, owner_suffix):
         self._teams = {}
         self._repos = {}
         self._fork_urls = {}
@@ -31,6 +29,13 @@ class Config(object):
         self.filename = filename
         self.verbose = verbose
         self.pretend = pretend
+
+        self.team_prefix = team_prefix
+        if team_prefix is False:
+            self.team_prefix = ''
+        self.owner_suffix = owner_suffix
+        if owner_suffix is False:
+            self.owner_suffix = ''
 
         if type(filename) is file:
             data = filename.read()
@@ -253,13 +258,13 @@ class ConfigCFG(Config):
                     fork_urls[name] = config.get(section, 'fork')
                 # add owners team
                 if config.has_option(section, 'owners'):
-                    team_name = TEAM_PREFIX + name + TEAM_OWNERS_SUFFIX
+                    team_name = self.team_prefix + name + self.owner_suffix
                     team_members = config.get(section, 'owners').split()
                     teams[team_name] = Team(team_name, 'admin',
                             members=team_members, repos=[name])
             elif section.startswith('team:'):
                 # add team
-                name = TEAM_PREFIX + section[len('team:'):]
+                name = self.team_prefix + section[len('team:'):]
                 permission = 'pull'
                 if config.has_option(section, 'permission'):
                     permission = config.get(section, 'permission')
@@ -277,7 +282,7 @@ class ConfigCFG(Config):
             if section.startswith('repo:'):
                 if config.has_option(section, 'teams'):
                     for team in config.get(section, 'teams').split():
-                        teams[TEAM_PREFIX + team].repos.add(
+                        teams[self.team_prefix + team].repos.add(
                                 section[len('repo:'):],
                                 )
 
@@ -285,9 +290,16 @@ class ConfigCFG(Config):
 
 class ConfigGithub(Config):
 
-    def __init__(self, github, cache, verbose=False, pretend=False):
+    def __init__(self, github, cache, verbose=False, pretend=False, team_prefix='', owner_suffix=''):
         self.github = github
         self._github = {'teams': {}, 'repos': {}}
+
+        self.team_prefix = team_prefix
+        if team_prefix is False:
+            self.team_prefix = ''
+        self.owner_suffix = owner_suffix
+        if owner_suffix is False:
+            self.owner_suffix = ''
 
         data = None
         if cache:
@@ -303,7 +315,11 @@ class ConfigGithub(Config):
            not self._github['teams']:
             self._github['teams'] = {}
             for item in self.github._gh_org_teams():
-                if not item['name'].startswith(TEAM_PREFIX):
+                # TODO: whats happening here? This seems to rely on
+                # team prefix being used.  Skips evyerthing else.
+                # If we are taking the no-prefix support approach
+                # then the script should accept all groups, ya?
+                if not item['name'].startswith(self.team_prefix):
                     continue
                 item.update(self.github._gh_team(item['id']))
                 team = Team(**item)

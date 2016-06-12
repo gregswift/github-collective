@@ -81,6 +81,8 @@ def run():
             args.config[1],
             args.verbose,
             args.pretend,
+            args.team_prefix,
+            args.owner_suffix,
             )
 
     old = ConfigGithub(
